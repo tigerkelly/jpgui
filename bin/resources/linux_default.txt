@@ -1,0 +1,190 @@
+^Generic Options:
+  *Package Type:--type -t <type>
+          The type of package to create
+          Valid values are: {"app-image", "rpm", "deb"}
+          If this option is not specified a platform dependent
+          default type will be created.
+;
+  *App Version:--app-version <version>
+          Version of the application and/or package
+;
+  *Copyright:--copyright <copyright string>
+          Copyright for the application
+;
+  *Description:--description <description string>
+          Description of the application
+;
+  +Icon:--icon <file path>
+          Path of the icon of the application package
+          (absolute path or relative to the current directory)
+;
+  *Name:--name -n <name>
+          Name of the application and/or package
+;
+  -Destination:--dest -d <destination path>
+          Path where generated output file is placed
+          (absolute path or relative to the current directory)
+          Defaults to the current working directory.
+;
+  -Temporary:--temp <directory path>
+          Path of a new or empty directory used to create temporary files
+          (absolute path or relative to the current directory)
+          If specified, the temp dir will not be removed upon the task
+          completion and must be removed manually.
+          If not specified, a temporary directory will be created and
+          removed upon the task completion.
+;
+  *Vendor:--vendor <vendor string>
+          Vendor of the application
+;
+^Runtime Image Options
+  *Add Modules:--add-modules <module name>[,<module name>...]
+          A comma (",") separated list of modules to add
+          This module list, along with the main module (if specified)
+          will be passed to jlink as the --add-module argument.
+          If not specified, either just the main module (if --module is
+          specified), or the default set of modules (if --main-jar is
+          specified) are used.
+          This option can be used multiple times.
+;
+  -Module Path:--module-path -p <module path>...
+          A : separated list of paths
+          Each path is either a directory of modules or the path to a
+          modular jar.
+          (Each path is absolute or relative to the current directory.)
+          This option can be used multiple times.
+;
+  *Jlink Options:--jlink-options <jlink options>
+          A space separated list of options to pass to jlink
+          If not specified, defaults to "--strip-native-commands
+          --strip-debug --no-man-pages --no-header-files".
+          This option can be used multiple times.
+;
+  -Runtime Image:--runtime-image <directory path>
+          Path of the predefined runtime image that will be copied into
+          the application image
+          (absolute path or relative to the current directory)
+          If --runtime-image is not specified, jpackage will run jlink to
+          create the runtime image using options:
+          --strip-debug, --no-header-files, --no-man-pages, and
+          --strip-native-commands.
+;
+^Application Image Options
+  -Input:--input -i <directory path>
+          Path of the input directory that contains the files to be packaged
+          (absolute path or relative to the current directory)
+          All files in the input directory will be packaged into the
+          application image.
+;
+  *App Content:--app-content <additional content>[,<additional content>...]
+          A comma separated list of paths to files and/or directories
+          to add to the application payload.
+          This option can be used more than once.
+;
+^Application Launcher(s) Options
+  +Add Launcher:--add-launcher <launcher name>=<file path>
+          Name of launcher, and a path to a Properties file that contains
+          a list of key, value pairs
+          (absolute path or relative to the current directory)
+          The keys "module", "main-jar", "main-class", "description",
+          "arguments", "java-options", "app-version", "icon",
+          "launcher-as-service",
+          "win-console", "win-shortcut", "win-menu",
+          "linux-app-category", and "linux-shortcut" can be used.
+          These options are added to, or used to overwrite, the original
+          command line options to build an additional alternative launcher.
+          The main application launcher will be built from the command line
+          options. Additional alternative launchers can be built using
+          this option, and this option can be used multiple times to
+          build multiple additional launchers.
+;
+  *Arguments:--arguments <main class arguments>
+          Command line arguments to pass to the main class if no command
+          line arguments are given to the launcher
+          This option can be used multiple times.
+;
+  *Java Options:--java-options <java options>
+          Options to pass to the Java runtime
+          This option can be used multiple times.
+;
+  *Main Class:--main-class <class name>
+          Qualified name of the application main class to execute
+;
+  +Main Jar:--main-jar <main jar file>
+          The main JAR of the application; containing the main class
+          (specified as a path relative to the input path)
+          Either --module or --main-jar option can be specified but not
+          both.
+;
+  *Module:--module -m <module name>[/<main class>]
+          The main module (and optionally main class) of the application
+          This module must be located on the module path.
+          When this option is specified, the main module will be linked
+          in the Java runtime image.  Either --module or --main-jar
+          option can be specified but not both.
+;
+^Application Package Options
+  *About URL:--about-url <url>
+          URL of the application's home page
+;
+  -App Image:--app-image <directory path>
+          Location of the predefined application image that is used
+          to build an installable package
+          (absolute path or relative to the current directory)
+;
+  +File Assoc:--file-associations <file path>
+          Path to a Properties file that contains list of key, value pairs
+          (absolute path or relative to the current directory)
+          The keys "extension", "mime-type", "icon", and "description"
+          can be used to describe the association.
+          This option can be used multiple times.
+;
+  -Install Dir:--install-dir <directory path>
+          Absolute path of the installation directory of the application
+;
+  +License File:--license-file <file path>
+          Path to the license file
+          (absolute path or relative to the current directory)
+;
+  -Resource Dir:--resource-dir <directory path>
+          Path to override jpackage resources
+          Icons, template files, and other resources of jpackage can be
+          over-ridden by adding replacement resources to this directory.
+          (absolute path or relative to the current directory)
+;
+  -Runtime Image:--runtime-image <directory path>
+          Path of the predefined runtime image to install
+          (absolute path or relative to the current directory)
+          Option is required when creating a runtime package.
+;
+  &Launcher Service:--launcher-as-service
+          Request to create an installer that will register the main
+          application launcher as a background service-type application.
+;
+^Platform Dependent Package Options
+  *Package Name:--linux-package-name <package name>
+          Name for Linux package, defaults to the application name
+;
+  *Deb Maintainer:--linux-deb-maintainer <email address>
+          Maintainer for .deb package
+;
+  *Menu Group:--linux-menu-group <menu-group-name>
+          Menu group this application is placed in
+;
+  &Package Deps:--linux-package-deps
+          Required packages or capabilities for the application
+;
+  *RPM License Type:--linux-rpm-license-type <type string>
+          Type of the license ("License: <value>" of the RPM .spec)
+;
+  *App Release:--linux-app-release <release value>
+          Release value of the RPM <name>.spec file or
+          Debian revision value of the DEB control file
+;
+  *App Category:--linux-app-category <category value>
+          Group value of the RPM <name>.spec file or
+          Section value of DEB control file
+;
+  &Shortcut:--linux-shortcut
+          Creates a shortcut for the application.
+;

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="aPane" prefHeight="800.0" prefWidth="750.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.JpGuiController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox fx:id="hbTitle" alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="lblTitle" text="JPackage Project GUI">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="BOTTOM_LEFT">
+                     <children>
+                        <Label fx:id="lblVersion" text="Label">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="4.0" />
+               </padding>
+            </HBox>
+            <MenuBar style="-fx-font-size: 15px;">
+              <menus>
+                <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem fx:id="mFileNewProject" mnemonicParsing="false" onAction="#doFileNewProject" text="New Project" />
+                        <MenuItem fx:id="mFileOpenProject" mnemonicParsing="false" onAction="#doFileOpenProject" text="Open Project" />
+                        <MenuItem fx:id="mFileSaveProject" mnemonicParsing="false" onAction="#doFileSaveProject" text="Save Project" />
+                        <MenuItem fx:id="mFileSaveAllProjects" mnemonicParsing="false" onAction="#doFileSaveAllProjects" text="Save All Projects" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="mFileDeleteProject" mnemonicParsing="false" onAction="#doFileDeleteProject" text="Delete Project" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="mFileQuit" mnemonicParsing="false" onAction="#doFileQuit" text="Quit" />
+                  </items>
+                </Menu>
+                <Menu fx:id="menuAction" mnemonicParsing="false" text="Action">
+                  <items>
+                    <MenuItem fx:id="mActionRun" mnemonicParsing="false" onAction="#doActionRun" text="Run" />
+                        <MenuItem fx:id="mActionScript" mnemonicParsing="false" onAction="#doActionScript" text="Script" />
+                  </items>
+                </Menu>
+                <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem fx:id="mHelpRequired" mnemonicParsing="false" onAction="#doHelpRequired" text="Required" />
+                        <MenuItem fx:id="mHelpHelp" mnemonicParsing="false" onAction="#doHelpHelp" text="Help" />
+                        <MenuItem fx:id="mHelpAbout" mnemonicParsing="false" onAction="#doHelpAbout" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" spacing="4.0">
+               <children>
+                  <Label text="Status:">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblStatus">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

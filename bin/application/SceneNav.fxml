@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="850.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.SceneNavController">
+   <children>
+      <StackPane fx:id="sceneHolder" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

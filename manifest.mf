@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: inifile8-2.0.18.jar
+Main-Class: application.Main
+
