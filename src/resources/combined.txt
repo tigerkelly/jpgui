@@ -1,13 +1,15 @@
+## This combines all three jpackage options into one file.
+##
 ^Generic Options
-*Package Type:--type -t <type>
+  *Package Type:--type -t <type>
           The type of package to create
           Valid values are: {"app-image", "exe", "msi"}
           If this option is not specified a platform dependent
           default type will be created.
 ;
-*App Version:--app-version <version>
+  *App Version:--app-version <version>
           Version of the application and/or package
-;         
+;
   *Copyright:--copyright <copyright string>
           Copyright for the application
 ;
@@ -47,7 +49,7 @@
           specified) are used.
           This option can be used multiple times.
 ;
-  *Module Path:--module-path -p <module path>...
+  -Module Path:--module-path -p <module path>...
           A ; separated list of paths
           Each path is either a directory of modules or the path to a
           modular jar.
@@ -60,7 +62,7 @@
           --strip-debug --no-man-pages --no-header-files".
           This option can be used multiple times.
 ;
-  *Runtime Image:--runtime-image <directory path>
+  -Runtime Image:--runtime-image <directory path>
           Path of the predefined runtime image that will be copied into
           the application image
           (absolute path or relative to the current directory)
@@ -129,7 +131,49 @@
           Creates a console launcher for the application, should be
           specified for application which requires console interactions
 ;
-Application Package Options
+## Mac Launcher Options
+  *Package ID:--mac-package-identifier <ID string>
+          An identifier that uniquely identifies the application for macOS
+          Defaults to the main class name.
+          May only use alphanumeric (A-Z,a-z,0-9), hyphen (-),
+          and period (.) characters.
+;
+  *Package Name:--mac-package-name <name string>
+          Name of the application as it appears in the Menu Bar
+          This can be different from the application name.
+          This name must be less than 16 characters long and be suitable for
+          displaying in the menu bar and the application Info window.
+          Defaults to the application name.
+;
+  *Signing Prefix:--mac-package-signing-prefix <prefix string>
+          When signing the application package, this value is prefixed
+          to all components that need to be signed that don't have
+          an existing package identifier.
+;
+  &Sign:--mac-sign
+          Request that the package or the predefined application image be
+          signed.
+;
+  *Signing Keychain:--mac-signing-keychain <keychain name>
+          Name of the keychain to search for the signing identity
+          If not specified, the standard keychains are used.
+;
+  *Signing Key User:--mac-signing-key-user-name <team name>
+          Team or user name portion of Apple signing identities.
+;
+  &App Store:--mac-app-store
+          Indicates that the jpackage output is intended for the
+          Mac App Store.
+;
+  +Entitlements:--mac-entitlements <file path>
+          Path to file containing entitlements to use when signing
+          executables and libraries in the bundle.
+;
+  *App Category:--mac-app-category <category string>
+          String used to construct LSApplicationCategoryType in
+          application plist.  The default value is "utilities".
+;
+^Application Package Options
   *About URL:--about-url <url>
           URL of the application's home page
 ;
@@ -196,4 +240,36 @@ Application Package Options
 ; 
   *Upgrade UUID:--win-upgrade-uuid <id string>
           UUID associated with upgrades for this package
+;
+## Linux options
+  *Package Name:--linux-package-name <package name>
+          Name for Linux package, defaults to the application name
+;
+  *Deb Maintainer:--linux-deb-maintainer <email address>
+          Maintainer for .deb package
+;
+  *Menu Group:--linux-menu-group <menu-group-name>
+          Menu group this application is placed in
+;
+  &Package Deps:--linux-package-deps
+          Required packages or capabilities for the application
+;
+  *RPM License Type:--linux-rpm-license-type <type string>
+          Type of the license ("License: <value>" of the RPM .spec)
+;
+  *App Release:--linux-app-release <release value>
+          Release value of the RPM <name>.spec file or
+          Debian revision value of the DEB control file
+;
+  *App Category:--linux-app-category <category value>
+          Group value of the RPM <name>.spec file or
+          Section value of DEB control file
+;
+  &Shortcut:--linux-shortcut
+          Creates a shortcut for the application.
+;
+## Mac options
+  *DMG Content:--mac-dmg-content <additional content path>[,<additional content path>...]
+          Include all the referenced content in the dmg.
+          This option can be used multiple times.
 ;

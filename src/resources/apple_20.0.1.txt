@@ -1,13 +1,13 @@
-^Generic Options
-*Package Type:--type -t <type>
+^Generic Options:
+  *Package Type:--type -t <type>
           The type of package to create
-          Valid values are: {"app-image", "exe", "msi"}
+          Valid values are: {"app-image", "dmg", "pkg"}
           If this option is not specified a platform dependent
           default type will be created.
 ;
-*App Version:--app-version <version>
+  *App Version:--app-version <version>
           Version of the application and/or package
-;         
+;
   *Copyright:--copyright <copyright string>
           Copyright for the application
 ;
@@ -47,8 +47,8 @@
           specified) are used.
           This option can be used multiple times.
 ;
-  *Module Path:--module-path -p <module path>...
-          A ; separated list of paths
+  -Module Path:--module-path -p <module path>...
+          A : separated list of paths
           Each path is either a directory of modules or the path to a
           modular jar.
           (Each path is absolute or relative to the current directory.)
@@ -60,7 +60,7 @@
           --strip-debug --no-man-pages --no-header-files".
           This option can be used multiple times.
 ;
-  *Runtime Image:--runtime-image <directory path>
+  -Runtime Image:--runtime-image <directory path>
           Path of the predefined runtime image that will be copied into
           the application image
           (absolute path or relative to the current directory)
@@ -125,17 +125,55 @@
           option can be specified but not both.
 ;
 ^Platform Dependent Launcher Options
-  &Win Console:--win-console
-          Creates a console launcher for the application, should be
-          specified for application which requires console interactions
+  *Package ID:--mac-package-identifier <ID string>
+          An identifier that uniquely identifies the application for macOS
+          Defaults to the main class name.
+          May only use alphanumeric (A-Z,a-z,0-9), hyphen (-),
+          and period (.) characters.
 ;
-Application Package Options
+  *Package Name:--mac-package-name <name string>
+          Name of the application as it appears in the Menu Bar
+          This can be different from the application name.
+          This name must be less than 16 characters long and be suitable for
+          displaying in the menu bar and the application Info window.
+          Defaults to the application name.
+;
+  *Signing Prefix:--mac-package-signing-prefix <prefix string>
+          When signing the application package, this value is prefixed
+          to all components that need to be signed that don't have
+          an existing package identifier.
+;
+  &Sign:--mac-sign
+          Request that the package or the predefined application image be
+          signed.
+;
+  *Signing Keychain:--mac-signing-keychain <keychain name>
+          Name of the keychain to search for the signing identity
+          If not specified, the standard keychains are used.
+;
+  *Signing Key User:--mac-signing-key-user-name <team name>
+          Team or user name portion of Apple signing identities.
+;
+  &App Store:--mac-app-store
+          Indicates that the jpackage output is intended for the
+          Mac App Store.
+;
+  +Entitlements:--mac-entitlements <file path>
+          Path to file containing entitlements to use when signing
+          executables and libraries in the bundle.
+;
+  *App Category:--mac-app-category <category string>
+          String used to construct LSApplicationCategoryType in
+          application plist.  The default value is "utilities".
+;
+^Application Package Options
   *About URL:--about-url <url>
           URL of the application's home page
 ;
   -App Image:--app-image <directory path>
           Location of the predefined application image that is used
-          to build an installable package
+          to build an installable package or to sign the predefined
+          application image
           (absolute path or relative to the current directory)
 ;
   +File Assoc:--file-associations <file path>
@@ -146,7 +184,7 @@ Application Package Options
           This option can be used multiple times.
 ;
   -Install Dir:--install-dir <directory path>
-          Relative sub-path under the default installation location
+          Absolute path of the installation directory of the application
 ;
   +License File:--license-file <file path>
           Path to the license file
@@ -168,32 +206,7 @@ Application Package Options
           application launcher as a background service-type application.
 ;
 ^Platform Dependent Package Options
-  &Dir Chooser:--win-dir-chooser
-          Adds a dialog to enable the user to choose a directory in which
-          the product is installed.
-;
-  *Help URL:--win-help-url <url>
-          URL where user can obtain further information or technical support
-;
-  &Menu:--win-menu
-          Request to add a Start menu shortcut for this application
-;
-  &Menu Group:--win-menu-group <menu group name>
-          Start Menu group this application is placed in
-;
-  &Per User Install:--win-per-user-install
-          Request to perform an install on a per-user basis
-;
-  &Shortcut:--win-shortcut
-          Request to add desktop shortcut for this application
-;
-  &Shortcut Prompt:--win-shortcut-prompt
-          Adds a dialog to enable the user to choose if shortcuts
-          will be created by installer.
-;
-  *Update URL:--win-update-url <url>
-          URL of available application update information
-; 
-  *Upgrade UUID:--win-upgrade-uuid <id string>
-          UUID associated with upgrades for this package
+  *DMG Content:--mac-dmg-content <additional content path>[,<additional content path>...]
+          Include all the referenced content in the dmg.
+          This option can be used multiple times.
 ;
