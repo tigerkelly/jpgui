@@ -53,14 +53,14 @@ public class HelpController implements Initializable, RefreshScene {
 		
 		String fn = null;
 		if (os.contains("win") == true) {
-			fn = "windows_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
+			fn = "combined.txt";
 		} else if (os.contains("nux") == true || 
 				os.contains("nix") == true || 
 				os.contains("aix") == true || 
 				os.contains("sunos") == true) {
-			fn = "linux_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
+			fn = "combined.txt";
 		} else if (os.contains("mac") == true) {
-			fn = "apple_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
+			fn = "combined.txt";
 		}
 		
 		AnchorPane ap2 = null;

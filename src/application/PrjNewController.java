@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -85,7 +86,23 @@ public class PrjNewController implements Initializable, RefreshScene {
 	    
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		TextFormatter<?> formatter = new TextFormatter<>((TextFormatter.Change change) -> {
+		    String text = change.getText();
+
+		    // if text was added, fix the text to fit the requirements
+		    if (!text.isEmpty()) {
+		        String newText = text.replace(" ", "").toLowerCase();
+
+		        int carretPos = change.getCaretPosition() - text.length() + newText.length();
+		        change.setText(newText);
+
+		        // fix carret position based on difference in originally added text and fixed text
+		        change.selectRange(carretPos, carretPos);
+		    }
+		    return change;
+		});
 		
+		tfProjectName.setTextFormatter(formatter);
 	}
 	
 	@Override

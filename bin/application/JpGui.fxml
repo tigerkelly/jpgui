@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -9,6 +10,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -16,7 +18,7 @@
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox fx:id="hbTitle" alignment="CENTER_LEFT">
+            <HBox fx:id="hbTitle" alignment="CENTER_LEFT" spacing="4.0">
                <children>
                   <Label fx:id="lblTitle" text="JPackage Project GUI">
                      <font>
@@ -32,9 +34,11 @@
                         </Label>
                      </children>
                   </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="cbPlatform" onAction="#doPlatform" prefWidth="100.0" style="-fx-font-size: 16px;" />
                </children>
                <padding>
-                  <Insets left="4.0" />
+                  <Insets bottom="4.0" left="6.0" right="6.0" top="4.0" />
                </padding>
             </HBox>
             <MenuBar style="-fx-font-size: 15px;">

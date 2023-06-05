@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import com.rkw.IniFile;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,9 +24,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -99,6 +102,12 @@ public class JpGuiController implements Initializable, RefreshScene {
 
     @FXML
     private MenuItem mHelpRequired;
+    
+    @FXML
+    private ComboBox<String> cbPlatform;
+
+    @FXML
+    private Menu menuPlatform;
 
     @FXML
     private Menu menuAction;
@@ -110,6 +119,7 @@ public class JpGuiController implements Initializable, RefreshScene {
     private Menu menuHelp;
     
     private JpGlobal jg = JpGlobal.getInstance();
+    ObservableList<String> platforms = null;
     Popup popup = null;
     DirectoryChooser dc = null;
     FileChooser fc = null;
@@ -231,10 +241,35 @@ public class JpGuiController implements Initializable, RefreshScene {
     void doHelpRequired(ActionEvent event) {
     	jg.centerScene(aPane, "ReqPkg.fxml", "Required Packages", null);
     }
+    
+    @FXML
+    void doPlatform(ActionEvent event) {
+    	setFields();
+    }
 
 	    
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		String os = System.getProperty("os.name").toLowerCase();
+		
+		platforms = FXCollections.observableArrayList();
+		
+		platforms.addAll("Win", "Linux", "Mac");
+		
+		cbPlatform.setItems(platforms);
+		
+		
+		if (os.contains("win") == true) {
+			cbPlatform.setValue("Win");
+		} else if (os.contains("nux") == true || 
+				os.contains("nix") == true || 
+				os.contains("aix") == true || 
+				os.contains("sunos") == true) {
+			cbPlatform.setValue("Linux");
+		} else if (os.contains("mac") == true) {
+			cbPlatform.setValue("Mac");
+		}
 		
 		jg.status = lblStatus;
 		
@@ -289,14 +324,6 @@ public class JpGuiController implements Initializable, RefreshScene {
 		jg.prjList.put(prjName, jg.currPrj);
 		
 		Tab tab = new Tab(prjName);
-		AnchorPane ap1 = new AnchorPane();
-		VBox vb1 = new VBox();
-		Accordion accordion = new Accordion();
-		
-		tab.setContent(ap1);
-		ap1.getChildren().add(vb1);
-		vb1.getChildren().add(accordion);
-		tabPane.getTabs().add(tab);
 		
 		tab.setOnSelectionChanged((e)->{
 			if (popup.isShowing() == true)
@@ -344,8 +371,29 @@ public class JpGuiController implements Initializable, RefreshScene {
 				popup.hide();
 		});
 		
-		ap1.setPrefHeight(600);
-		ap1.setPrefWidth(600);
+		loadTab(tab);
+		
+	}
+	
+	private void loadTab(Tab tab) {
+		
+		String prjName = tab.getText();
+		
+		AnchorPane ap1 = new AnchorPane();
+		ScrollPane sp = new ScrollPane();
+		VBox vb1 = new VBox();
+		Accordion accordion = new Accordion();
+		
+		sp.setFitToHeight(true);
+		sp.setFitToWidth(true);
+		
+		tab.setContent(sp);
+		sp.setContent(ap1);
+		ap1.getChildren().add(vb1);
+		vb1.getChildren().add(accordion);
+		tabPane.getTabs().add(tab);
+		
+		VBox.setVgrow(sp, Priority.ALWAYS);
 		VBox.setVgrow(vb1, Priority.ALWAYS);
 		VBox.setVgrow(accordion, Priority.ALWAYS);
 		
@@ -354,39 +402,15 @@ public class JpGuiController implements Initializable, RefreshScene {
 		AnchorPane.setRightAnchor(vb1, 0.0);
 		AnchorPane.setLeftAnchor(vb1, 0.0);
 		
-		String os = System.getProperty("os.name").toLowerCase();
-		
-		String fn = null;
-		if (os.contains("Windows") == true) {
-			fn = "windows_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
-		} else if (os.contains("Linux") == true) {
-			fn = "linux_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
-		} else if (os.contains("Apple") == true) {
-			fn = "apple_" + jg.jpackageVersion.replaceAll("\\.", "_") + ".txt";
-		}
-	
-		InputStream inJar = getClass().getResourceAsStream("/resources/" + fn);
-		if (inJar == null) {
-			if (os.contains("Windows") == true) {
-				fn = "windows_default.txt";
-			} else if (os.contains("Linux") == true) {
-				fn = "linux_default.txt";
-			} else if (os.contains("Apple") == true) {
-				fn = "apple_default.txt";
-			}
-		} else {
-			try {
-				inJar.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		String fn = "combined.txt";
 		
 		AnchorPane ap2 = null;
 		TitledPane tp = null;
 		VBox vb2 = new VBox();
 		HBox hb = null;
 		String hColor = "#ffff00;";
+		
+		String os = cbPlatform.getValue();
 		
 		try (InputStream in = getClass().getResourceAsStream("/resources/" + fn);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
@@ -398,10 +422,15 @@ public class JpGuiController implements Initializable, RefreshScene {
 					continue;
 				}
 				
+				if (line.startsWith("##") == true) {		// skip comments
+					continue;
+				}
+				
 				if (line.charAt(0) == '^') {
 //					System.out.println(line);
 					
 					tp = new TitledPane();
+					sp = new ScrollPane();
 					ap2 = new AnchorPane();
 					vb2 = new VBox();
 					
@@ -427,17 +456,22 @@ public class JpGuiController implements Initializable, RefreshScene {
 					vb2.setSpacing(4.0);
 					tp.setContent(vb2);
 					
-				} else if (line.charAt(0) == '&') {
-//					System.out.println(line);
-					String[] arr = line.split(":");
-					Label lbl = new Label(arr[0].substring(1) + ":");
-					lbl.setUserData(arr[0].substring(1));
-					lbl.setStyle("-fx-font-size:16px;");
-					lbl.setPrefWidth(140.0);
-					hb = new HBox();
-					hb.setSpacing(4.0);
-					hb.setPadding(new Insets(4, 4, 4, 4));
-					hb.setAlignment(Pos.CENTER_LEFT);
+					continue;
+				}
+				
+				String[] arr = line.split(":");
+				String opt = arr[1].split(" ")[0];
+				
+				Label lbl = new Label(arr[0].substring(1) + ":");
+				lbl.setUserData(arr[0].substring(1));
+				lbl.setStyle("-fx-font-size:16px;");
+				lbl.setPrefWidth(140.0);
+				hb = new HBox();
+				hb.setSpacing(4.0);
+				hb.setPadding(new Insets(4, 4, 4, 4));
+				hb.setAlignment(Pos.CENTER_LEFT);
+				
+				if (line.charAt(0) == '&') {
 					
 					CheckBox ckb = new CheckBox(arr[0].substring(1));
 					ckb.setStyle("-fx-font-size:16px;");
@@ -456,48 +490,25 @@ public class JpGuiController implements Initializable, RefreshScene {
 					    titledPane.setStyle("-fx-text-fill: " + hColor);
 					});
 					
-					Button b = new Button("?");
-					b.setStyle("-fx-font-size: 14px;");
-					b.setOnAction((e) -> {
-						TextArea ta = (TextArea)popup.getContent().get(0);
-						
-						Button bh = (Button)e.getSource();
-						String help = (String)bh.getUserData();
-						Stage s = (Stage)bh.getScene().getWindow();
-						
-						ta.setText(help);
-						
-						if (popup.isShowing() == false)
-							popup.show(s);
-						else {
-							popup.hide();
-							popup.show(s);
-						}
-					});
-					
-					hb.getChildren().addAll(lbl, ckb, b);
+					hb.getChildren().addAll(lbl, ckb);
 					vb2.getChildren().add(hb);
-					
-					String txt = arr[1];
-					String line2 = null;
-					while ((line2 = reader.readLine()) != null) {
-						line2 = line2.trim();
-						if (line2.charAt(0) == ';')
-							break;
-						txt += "\n" + line2;
+					if (opt.startsWith("--win") == true) {
+						if (os.equals("Win") == false) {
+							lbl.setDisable(true);
+							ckb.setDisable(true);
+						}
+					} else if (opt.startsWith("--linux") == true) {
+						if (os.equals("Linux") == false) {
+							lbl.setDisable(true);
+							ckb.setDisable(true);
+						}
+					} else if (opt.startsWith("--mac") == true) {
+						if (os.equals("Mac") == false) {
+							lbl.setDisable(true);
+							ckb.setDisable(true);
+						}
 					}
-					
-					b.setUserData(txt);
 				} else if (line.charAt(0) == '*') {
-					String[] arr = line.split(":");
-					Label lbl = new Label(arr[0].substring(1) + ":");
-					lbl.setUserData(arr[0].substring(1));
-					lbl.setStyle("-fx-font-size:16px;");
-					lbl.setPrefWidth(140.0);
-					hb = new HBox();
-					hb.setSpacing(4.0);
-					hb.setPadding(new Insets(4, 4, 4, 4));
-					hb.setAlignment(Pos.CENTER_LEFT);
 					
 					TextField tf = new TextField();
 					tf.setStyle("-fx-font-size:14px;");
@@ -506,7 +517,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						if (jg.loadFlag == true)
 							return;
 						if (newValue != null) {
-							System.out.println("textfield changed from " + oldValue + " to " + newValue);
+//							System.out.println("textfield changed from " + oldValue + " to " + newValue);
 							Tab t = tabPane.getSelectionModel().getSelectedItem();
 							if (t != null) {
 								ObservableList<String> c = t.getStyleClass();
@@ -518,54 +529,31 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
 					
-					Button b = new Button("?");
-					b.setStyle("-fx-font-size: 14px;");
-					b.setOnAction((e) -> {
-						TextArea ta = (TextArea)popup.getContent().get(0);
-						
-						Button bh = (Button)e.getSource();
-						String help = (String)bh.getUserData();
-						Stage s = (Stage)bh.getScene().getWindow();
-						
-						ta.setText(help);
-						
-						if (popup.isShowing() == false)
-							popup.show(s);
-						else {
-							popup.hide();
-							popup.show(s);
-						}
-					});
-					
-					hb.getChildren().addAll(lbl, tf, b);
+					hb.getChildren().addAll(lbl, tf);
 					vb2.getChildren().add(hb);
+					
+					if (opt.startsWith("--win") == true) {
+						if (os.equals("Win") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+						}
+					} else if (opt.startsWith("--linux") == true) {
+						if (os.equals("Linux") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+						}
+					} else if (opt.startsWith("--mac") == true) {
+						if (os.equals("Mac") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+						}
+					}
 					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
 							popup.hide();
 					});
-					
-					String txt = arr[1];
-					String line2 = null;
-					while ((line2 = reader.readLine()) != null) {
-						line2 = line2.trim();
-						if (line2.charAt(0) == ';')
-							break;
-						txt += "\n" +  line2;
-					}
-					
-					b.setUserData(txt);
 				} else if (line.charAt(0) == '-') {
-//					System.out.println(line);
-					String[] arr = line.split(":");
-					Label lbl = new Label(arr[0].substring(1) + ":");
-					lbl.setUserData(arr[0].substring(1));
-					lbl.setStyle("-fx-font-size:16px;");
-					lbl.setPrefWidth(140.0);
-					hb = new HBox();
-					hb.setSpacing(4.0);
-					hb.setPadding(new Insets(4, 4, 4, 4));
-					hb.setAlignment(Pos.CENTER_LEFT);
 					
 					TextField tf = new TextField();
 					tf.setStyle("-fx-font-size:14px;");
@@ -574,7 +562,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						if (jg.loadFlag == true)
 							return;
 						if (newValue != null) {
-							System.out.println("textfield changed from " + oldValue + " to " + newValue);
+//							System.out.println("textfield changed from " + oldValue + " to " + newValue);
 							Tab t = tabPane.getSelectionModel().getSelectedItem();
 							if (t != null) {
 								ObservableList<String> c = t.getStyleClass();
@@ -601,54 +589,34 @@ public class JpGuiController implements Initializable, RefreshScene {
 					tt.setStyle("-fx-font-size: 14px;");
 					b1.setTooltip(tt);
 					
-					Button b2 = new Button("?");
-					b2.setStyle("-fx-font-size: 14px;");
-					b2.setOnAction((e) -> {
-						TextArea ta = (TextArea)popup.getContent().get(0);
-						
-						Button bh = (Button)e.getSource();
-						String help = (String)bh.getUserData();
-						Stage s = (Stage)bh.getScene().getWindow();
-						
-						ta.setText(help);
-						
-						if (popup.isShowing() == false)
-							popup.show(s);
-						else {
-							popup.hide();
-							popup.show(s);
-						}
-					});
-					
-					hb.getChildren().addAll(lbl, tf, b1, b2);
+					hb.getChildren().addAll(lbl, tf, b1);
 					vb2.getChildren().add(hb);
+					
+					if (opt.startsWith("--win") == true) {
+						if (os.equals("Win") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					} else if (opt.startsWith("--linux") == true) {
+						if (os.equals("Linux") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					} else if (opt.startsWith("--mac") == true) {
+						if (os.equals("Mac") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					}
 					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
 							popup.hide();
 					});
-					
-					String txt = arr[1];
-					String line2 = null;
-					while ((line2 = reader.readLine()) != null) {
-						line2 = line2.trim();
-						if (line2.charAt(0) == ';')
-							break;
-						txt += "\n" +  line2;
-					}
-					
-					b2.setUserData(txt);
 				} else if (line.charAt(0) == '+') {
-//					System.out.println(line);
-					String[] arr = line.split(":");
-					Label lbl = new Label(arr[0].substring(1) + ":");
-					lbl.setUserData(arr[0].substring(1));
-					lbl.setStyle("-fx-font-size:16px;");
-					lbl.setPrefWidth(140.0);
-					hb = new HBox();
-					hb.setSpacing(4.0);
-					hb.setPadding(new Insets(4, 4, 4, 4));
-					hb.setAlignment(Pos.CENTER_LEFT);
 					
 					TextField tf = new TextField();
 					tf.setStyle("-fx-font-size:14px;");
@@ -684,44 +652,68 @@ public class JpGuiController implements Initializable, RefreshScene {
 					tt.setStyle("-fx-font-size: 14px;");
 					b1.setTooltip(tt);
 					
-					Button b2 = new Button("?");
-					b2.setStyle("-fx-font-size: 14px;");
-					b2.setOnAction((e) -> {
-						TextArea ta = (TextArea)popup.getContent().get(0);
-						
-						Button bh = (Button)e.getSource();
-						String help = (String)bh.getUserData();
-						Stage s = (Stage)bh.getScene().getWindow();
-						
-						ta.setText(help);
-						
-						if (popup.isShowing() == false)
-							popup.show(s);
-						else {
-							popup.hide();
-							popup.show(s);
-						}
-					});
-					
-					hb.getChildren().addAll(lbl, tf, b1, b2);
+					hb.getChildren().addAll(lbl, tf, b1);
 					vb2.getChildren().add(hb);
+					
+					if (opt.startsWith("--win") == true) {
+						if (os.equals("Win") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					} else if (opt.startsWith("--linux") == true) {
+						if (os.equals("Linux") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					} else if (opt.startsWith("--mac") == true) {
+						if (os.equals("Mac") == false) {
+							lbl.setDisable(true);
+							tf.setDisable(true);
+							b1.setDisable(true);
+						}
+					}
 					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
 							popup.hide();
 					});
-					
-					String txt = arr[1];
-					String line2 = null;
-					while ((line2 = reader.readLine()) != null) {
-						line2 = line2.trim();
-						if (line2.charAt(0) == ';')
-							break;
-						txt += "\n" +  line2;
-					}
-					
-					b2.setUserData(txt);
 				}
+				
+				// Add Help button.
+				
+				Button qb = new Button("?");
+				qb.setStyle("-fx-font-size: 14px;");
+				qb.setOnAction((e) -> {
+					TextArea ta = (TextArea)popup.getContent().get(0);
+					
+					Button bh = (Button)e.getSource();
+					String help = (String)bh.getUserData();
+					Stage s = (Stage)bh.getScene().getWindow();
+					
+					ta.setText(help);
+					
+					if (popup.isShowing() == false)
+						popup.show(s);
+					else {
+						popup.hide();
+						popup.show(s);
+					}
+				});
+				
+				hb.getChildren().add(qb);
+				
+				String txt = arr[1];
+				String line2 = null;
+				while ((line2 = reader.readLine()) != null) {
+					line2 = line2.trim();
+					if (line2.charAt(0) == ';')
+						break;
+					txt += "\n" +  line2;
+				}
+				
+				qb.setUserData(txt);
 			}
 			reader.close();
 			in.close();
@@ -731,7 +723,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 		
 		loadFields(prjName);
 	}
-	
+ 	
 	private void loadFields(String prjName) {
 		IniFile ini = jg.prjList.get(prjName);
 		
@@ -741,9 +733,11 @@ public class JpGuiController implements Initializable, RefreshScene {
 		ObservableList<Tab> tabs = tabPane.getTabs();
 		
 		AnchorPane ap = null;
+		ScrollPane sp = null;
 		for (Tab tab : tabs) {
 			if (tab.getText().equalsIgnoreCase(prjName) == true) {
-				ap = (AnchorPane)tab.getContent();
+				sp = (ScrollPane)tab.getContent();
+				ap = (AnchorPane)sp.getContent();
 				break;
 			}
 		}
@@ -803,7 +797,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 		
 		tab.getStyleClass().remove("dirty");
 		
-		AnchorPane ap = (AnchorPane)tab.getContent();
+		ScrollPane sp = (ScrollPane)tab.getContent();
+		AnchorPane ap = (AnchorPane)sp.getContent();
 		VBox vb = (VBox)ap.getChildren().get(0);
 		Accordion a = (Accordion)vb.getChildren().get(0);
 		
@@ -844,7 +839,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 	}
 	
 	private File buildScript() {
-		String os = System.getProperty("os.name").toLowerCase();
+		String os = cbPlatform.getValue().toLowerCase();
     	
     	Tab tab = tabPane.getSelectionModel().getSelectedItem();
     	
@@ -856,14 +851,10 @@ public class JpGuiController implements Initializable, RefreshScene {
     	boolean isWin = false;
     	String fn = tab.getText();
     	
-		if (os.contains("win") == true) {
+		if (os.equals("win") == true) {
 			fn += ".bat";
 			isWin = true;
-		} else if (os.contains("nux") == true || 
-				os.contains("nix") == true || 
-				os.contains("aix") == true || 
-				os.contains("sunos") == true || 
-				os.contains("mac") == true) {
+		} else if (os.equals("linux") == true || os.equals("mac") == true) {
 			fn += ".sh";
 			isWin = false;
 		}
@@ -882,16 +873,18 @@ public class JpGuiController implements Initializable, RefreshScene {
 			
 			if (isWin == true) {
 				fw.write("@echo off\nrem Batch file to execute a jpackage command line.\nrem Generated by the JpGui program.\n\n");
-				fw.write("if [%1]==[] goto usage\n\n");
+//				fw.write("if [%1]==[] goto usage\n\n");
 				fw.write("jpackage");
 			} else {
-				fw.write("#!/usr/sh# Shell script to execute a jpackage command line.\\n# Generated by the JpGui program.\\n\\n");
-				fw.write("if [ $# != 1 ]; then\n");
-				fw.write("   echo Usage: " + fn + " version\n");
-				fw.write("   exit 1\nfi\n\n");
+				fw.write("#!/usr/sh\n# Shell script to execute a jpackage command line.\n# Generated by the JpGui program.\n\n");
+//				fw.write("if [ $# != 1 ]; then\n");
+//				fw.write("   echo Usage: " + fn + " version\n");
+//				fw.write("   exit 1\nfi\n\n");
+				fw.write("jpackage");
 			}
 			
-			AnchorPane ap = (AnchorPane)tab.getContent();
+			ScrollPane sp = (ScrollPane)tab.getContent();
+			AnchorPane ap = (AnchorPane)sp.getContent();
 			VBox vb = (VBox)ap.getChildren().get(0);
 			Accordion a = (Accordion)vb.getChildren().get(0);
 			
@@ -914,6 +907,16 @@ public class JpGuiController implements Initializable, RefreshScene {
 					if (help != null) {
 						arr = help.split("\\n");
 						opt = arr[0].split(" ")[0];
+						if (os.equals("win") == true) {
+							if (opt.startsWith("--linux") == true || opt.startsWith("--mac") == true)
+								continue;
+						} else if (os.equals("linux") == true) {
+							if (opt.startsWith("--win") == true || opt.startsWith("--mac") == true)
+								continue;
+						} else if (os.equals("max") == true) {
+							if (opt.startsWith("--win") == true || opt.startsWith("--linux") == true)
+								continue;
+						}
 					}
 					
 					if (fields.get(1) instanceof TextField) {
@@ -939,10 +942,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 			}
 			
 			if (isWin == true) {
-				fw.write("\n\ngoto :eof");
-				fw.write("\n\n:usage\n   echo Usage: " + fn + " version\nexit /B 1\n");
+//				fw.write("\n\ngoto :eof");
+//				fw.write("\n\n:usage\n   echo Usage: " + fn + " version\nexit /B 1\n");
 			} else {
-				fw.write("exit 0\n");
+				fw.write("\n\nexit 0\n");
 			}
 			
 			if (isWin == true)
@@ -979,6 +982,114 @@ public class JpGuiController implements Initializable, RefreshScene {
 		    mFileDeleteProject.setDisable(false);
 		    mFileSaveProject.setDisable(false);
 		    mHelpAbout.setDisable(false);
+		}
+	}
+	
+	private void setFields() {
+		Tab tab = tabPane.getSelectionModel().getSelectedItem();
+		if (tab == null)
+			return;
+		
+		String os = cbPlatform.getValue().toLowerCase();
+		
+		ScrollPane sp = (ScrollPane)tab.getContent();
+		AnchorPane ap = (AnchorPane)sp.getContent();
+		VBox vb = (VBox)ap.getChildren().get(0);
+		Accordion a = (Accordion)vb.getChildren().get(0);
+		
+		ObservableList<TitledPane> panes = a.getPanes();
+		
+		for (TitledPane p : panes) {
+			
+			VBox vb2 = (VBox)p.getContent();
+			
+			ObservableList<Node> nodes = vb2.getChildren();
+			for (Node n : nodes) {
+				HBox hb = (HBox)n;
+				
+				ObservableList<Node> fields = hb.getChildren();
+				
+				Label lb = null;
+				TextField tf = null;
+				CheckBox ckb = null;
+				Button sel = null;
+				Button help = null;
+				
+				for (Node fld : fields) {
+					if (fld instanceof Label) {
+						lb = (Label)fld;
+					} else if (fld instanceof TextField) {
+						tf = (TextField)fld;
+					} else if (fld instanceof CheckBox) {
+						ckb = (CheckBox)fld;
+					} else if (fld instanceof Button) {
+						Button b = (Button)fld;
+						if (b.getUserData() != null)
+							help = b;
+						else
+							sel = b;
+					}
+					
+					if (help != null) {
+						String h = (String)help.getUserData();
+						if (os.equals("win") == true) {
+							if (h.startsWith("--linux") == true || h.startsWith("--mac") == true) {
+								lb.setDisable(true);
+								if (tf != null)
+									tf.setDisable(true);
+								if (ckb != null)
+									ckb.setDisable(true);
+								if (sel != null)
+									sel.setDisable(true);
+							} else {
+								lb.setDisable(false);
+								if (tf != null)
+									tf.setDisable(false);
+								if (ckb != null)
+									ckb.setDisable(false);
+								if (sel != null)
+									sel.setDisable(false);
+							}
+						} else if (os.equals("linux") == true) {
+							if (h.startsWith("--win") == true || h.startsWith("--mac") == true) {
+								lb.setDisable(true);
+								if (tf != null)
+									tf.setDisable(true);
+								if (ckb != null)
+									ckb.setDisable(true);
+								if (sel != null)
+									sel.setDisable(true);
+							} else {
+								lb.setDisable(false);
+								if (tf != null)
+									tf.setDisable(false);
+								if (ckb != null)
+									ckb.setDisable(false);
+								if (sel != null)
+									sel.setDisable(false);
+							}
+						} else if (os.equals("mac") == true) {
+							if (h.startsWith("--win") == true || h.startsWith("--linux") == true) {
+								lb.setDisable(true);
+								if (tf != null)
+									tf.setDisable(true);
+								if (ckb != null)
+									ckb.setDisable(true);
+								if (sel != null)
+									sel.setDisable(true);
+							} else {
+								lb.setDisable(false);
+								if (tf != null)
+									tf.setDisable(false);
+								if (ckb != null)
+									ckb.setDisable(false);
+								if (sel != null)
+									sel.setDisable(false);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	

@@ -1,13 +1,13 @@
 ^Generic Options
-*Package Type:--type -t <type>
+  *Package Type:--type -t <type>
           The type of package to create
           Valid values are: {"app-image", "exe", "msi"}
           If this option is not specified a platform dependent
           default type will be created.
 ;
-*App Version:--app-version <version>
+  *App Version:--app-version <version>
           Version of the application and/or package
-;         
+;
   *Copyright:--copyright <copyright string>
           Copyright for the application
 ;
@@ -47,7 +47,7 @@
           specified) are used.
           This option can be used multiple times.
 ;
-  *Module Path:--module-path -p <module path>...
+  -Module Path:--module-path -p <module path>...
           A ; separated list of paths
           Each path is either a directory of modules or the path to a
           modular jar.
@@ -60,7 +60,7 @@
           --strip-debug --no-man-pages --no-header-files".
           This option can be used multiple times.
 ;
-  *Runtime Image:--runtime-image <directory path>
+  -Runtime Image:--runtime-image <directory path>
           Path of the predefined runtime image that will be copied into
           the application image
           (absolute path or relative to the current directory)
@@ -129,7 +129,7 @@
           Creates a console launcher for the application, should be
           specified for application which requires console interactions
 ;
-Application Package Options
+^Application Package Options
   *About URL:--about-url <url>
           URL of the application's home page
 ;
