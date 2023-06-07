@@ -57,24 +57,21 @@ public class PrjNewController implements Initializable, RefreshScene {
     	
     	jg.sysIni.addValuePair("Projects", prjName, prjDesc);
     	
-    	File f = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-    					"projects" + File.separator + prjName + ".ini");
+    	File f1 = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
+    					"projects" + File.separator + prjName);
+    	if (f1.exists() == false) {
+    		f1.mkdirs();
+    	}
+    	File f2 = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
     	
-    	if (f.exists() == false) {
-//    		try {
-//				f.createNewFile();
-				
-				try {
-					FileWriter myWriter = new FileWriter(f.getAbsolutePath(), false);
-					myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
-					myWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				jg.sysIni.removeValuePair("Projects", prjName);
-//			}
+    	if (f2.exists() == false) {	
+			try {
+				FileWriter myWriter = new FileWriter(f2.getAbsolutePath(), false);
+				myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
+				myWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     	}
     	
     	jg.sysIni.writeFile(true);
@@ -91,7 +88,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 
 		    // if text was added, fix the text to fit the requirements
 		    if (!text.isEmpty()) {
-		        String newText = text.replace(" ", "").toLowerCase();
+		        String newText = text.replace(" ", "");
 
 		        int carretPos = change.getCaretPosition() - text.length() + newText.length();
 		        change.setText(newText);

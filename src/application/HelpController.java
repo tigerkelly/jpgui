@@ -35,7 +35,7 @@ public class HelpController implements Initializable, RefreshScene {
     @FXML
     private Button btnClose;
     
-    private JpGlobal jg = JpGlobal.getInstance();
+//    private JpGlobal jg = JpGlobal.getInstance();
 
     @FXML
     void doBtnClose(ActionEvent event) {

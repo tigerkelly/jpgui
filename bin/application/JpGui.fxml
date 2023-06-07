@@ -61,9 +61,14 @@
                         <MenuItem fx:id="mActionScript" mnemonicParsing="false" onAction="#doActionScript" text="Script" />
                   </items>
                 </Menu>
+                  <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
+                    <items>
+                      <MenuItem fx:id="mSetOptions" mnemonicParsing="false" onAction="#doSetOptions" text="Set Options" />
+                    </items>
+                  </Menu>
                 <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem fx:id="mHelpRequired" mnemonicParsing="false" onAction="#doHelpRequired" text="Required" />
+                    <MenuItem fx:id="mHelpRequired" mnemonicParsing="false" onAction="#doHelpRequired" text="HelpFul" />
                         <MenuItem fx:id="mHelpHelp" mnemonicParsing="false" onAction="#doHelpHelp" text="Help" />
                         <MenuItem fx:id="mHelpAbout" mnemonicParsing="false" onAction="#doHelpAbout" text="About" />
                   </items>

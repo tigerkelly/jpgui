@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -16,6 +17,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/jpgui_icon.png")));
 			primaryStage.setScene(createScene(loadMainPane()));
 			primaryStage.setMinWidth(750);
 			primaryStage.setMinHeight(800);

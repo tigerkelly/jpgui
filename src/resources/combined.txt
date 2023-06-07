@@ -1,3 +1,47 @@
+^JpGui Options
+  +Win PreRun:--win-prerun <file>
+          Windows batch file that is run BEFORE jpackage is executed.
+          This script could copy files to the input directory, for example.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  +Win PostRun:--win-postrun <file>
+          Widows batch file that will be run AFTER jpackage is executed.
+          This script could do some clean of files and/or directories.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  +Linux PreRun:--linux-prerun <file>
+          Linux shell file that is run BEFORE jpackage is executed.
+          This script could copy files to the input directory, for example.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  +Linux PostRun:--linux-postrun <file
+          Linux shell file that will be run AFTER jpackage  is executed.
+          This script could do some clean of files and/or directories.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  +MAC PreRun:--mac-prerun <file>
+          MAC shell file that is run BEFORE jpackage is executed.
+          This script could copy files to the input directory, for example.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  +MAC PostRun:--mac-postrun <file>
+          MAC shell file that will be run AFTER jpackage  is executed.
+          This script could do some clean of files and/or directories.
+          If script exits with a value of 1, then the main
+          script is aborted.
+;
+  &Verbose Output:--jp-verbose
+          If checked then --verbose is added to the jpackage command line.
+;
+  &Jpackage Version:--jp-version
+          If checked then the jpackage version will be displayed when 
+          script is run.
+;
 ## This combines all three jpackage options into one file.
 ##
 ^Generic Options
@@ -113,7 +157,7 @@
           Qualified name of the application main class to execute
           This option can only be used if --main-jar is specified.
 ;
-  +Main Jar:--main-jar <main jar file>
+  *Main Jar:--main-jar <main jar file>
           The main JAR of the application; containing the main class
           (specified as a path relative to the input path)
           Either --module or --main-jar option can be specified but not
@@ -265,7 +309,7 @@
           Group value of the RPM <name>.spec file or
           Section value of DEB control file
 ;
-  &Shortcut:--linux-shortcut
+  &Linux Shortcut:--linux-shortcut
           Creates a shortcut for the application.
 ;
 ## Mac options

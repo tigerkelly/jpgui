@@ -36,7 +36,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.0.0";
+		appVersion = "1.1.0";
 		
 		String d = System.getProperty("user.home");
 		
@@ -67,6 +67,10 @@ public class JpGlobal {
 		
 		sysIni = new IniFile(f.getAbsolutePath());
 		
+		jpackagePath = sysIni.getString("System", "jpackagePath");
+		if (jpackagePath == null || jpackagePath.isBlank() == true)
+			jpackagePath = "jpackage";
+		
 		prjList = new HashMap<String, IniFile>();
 		
 		prjList.clear();
@@ -81,7 +85,7 @@ public class JpGlobal {
 		
 		sceneNav = new SceneNav();
 		
-		String cmd = "jpackage --version";
+		String cmd = jpackagePath + " --version";
 		ProcessRet pr = runProcess(cmd.split(" "));
 		jpackageVersion = pr.getOutput();
 	}
@@ -100,6 +104,7 @@ public class JpGlobal {
 	public String projectOpen = null;
 	
 	public String jpackageVersion = null;
+	public String jpackagePath = null;
 	
 	public Label status = null;
 	
