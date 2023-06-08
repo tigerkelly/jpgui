@@ -39,6 +39,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -419,6 +420,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 		HBox hb = null;
 		String hColor = "#ffff00;";
 		
+		Font font1 = Font.font("SansSerif", 16.0);
+		
 		String os = cbPlatform.getValue();
 		
 		try (InputStream in = getClass().getResourceAsStream("/resources/" + fn);
@@ -473,8 +476,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 				
 				Label lbl = new Label(arr[0].substring(1) + ":");
 				lbl.setUserData(arr[0].substring(1));
-				lbl.setStyle("-fx-font-size:16px;");
-				lbl.setPrefWidth(140.0);
+				lbl.setFont(font1);
+				lbl.setPrefWidth(150.0);
 				hb = new HBox();
 				hb.setSpacing(4.0);
 				hb.setPadding(new Insets(4, 4, 4, 4));
@@ -483,7 +486,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				if (line.charAt(0) == '&') {
 					
 					CheckBox ckb = new CheckBox(arr[0].substring(1));
-					ckb.setStyle("-fx-font-size:16px;");
+					ckb.setFont(font1);
 					ckb.setPrefWidth(250);
 					final TitledPane titledPane = tp;
 					ckb.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -520,7 +523,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '*') {
 					
 					TextField tf = new TextField();
-					tf.setStyle("-fx-font-size:14px;");
+					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -565,7 +568,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '-') {
 					
 					TextField tf = new TextField();
-					tf.setStyle("-fx-font-size:14px;");
+					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -628,7 +631,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '+') {
 					
 					TextField tf = new TextField();
-					tf.setStyle("-fx-font-size:14px;");
+					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -647,7 +650,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					HBox.setHgrow(tf, Priority.ALWAYS);
 					
 					Button b1 = new Button("^");
-					b1.setStyle("-fx-font-size: 14px;");
+					b1.setFont(font1);
 					b1.setPrefWidth(30.0);
 					b1.setOnAction((e) -> {
 						Stage stage = (Stage) aPane.getScene().getWindow();
@@ -658,7 +661,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 					
 					Tooltip tt = new Tooltip("Select a file.");
-					tt.setStyle("-fx-font-size: 14px;");
+					tt.setFont(font1);
 					b1.setTooltip(tt);
 					
 					hb.getChildren().addAll(lbl, tf, b1);
@@ -693,7 +696,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				// Add Help button.
 				
 				Button qb = new Button("?");
-				qb.setStyle("-fx-font-size: 14px;");
+				qb.setFont(font1);
 				qb.setOnAction((e) -> {
 					TextArea ta = (TextArea)popup.getContent().get(0);
 					

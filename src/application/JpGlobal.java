@@ -36,7 +36,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.0";
+		appVersion = "1.1.1";
 		
 		String d = System.getProperty("user.home");
 		

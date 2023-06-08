@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane fx:id="aPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/1" fx:controller="application.PrjNewController">
+<AnchorPane fx:id="aPane" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PrjNewController">
    <children>
       <VBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -27,14 +26,14 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="4.0">
                <children>
-                  <Label prefWidth="125.0" text="Project Name:">
+                  <Label prefWidth="135.0" text="Project Name:">
                      <font>
-                        <Font size="18.0" />
+                        <Font name="SansSerif Regular" size="18.0" />
                      </font>
                   </Label>
                   <TextField fx:id="tfProjectName" HBox.hgrow="ALWAYS">
                      <font>
-                        <Font size="18.0" />
+                        <Font name="SansSerif Regular" size="18.0" />
                      </font>
                   </TextField>
                </children>
@@ -44,14 +43,14 @@
             </HBox>
             <HBox spacing="4.0">
                <children>
-                  <Label prefWidth="125.0" text="Description:">
+                  <Label prefWidth="135.0" text="Description:">
                      <font>
-                        <Font size="18.0" />
+                        <Font name="SansSerif Regular" size="18.0" />
                      </font>
                   </Label>
                   <TextArea fx:id="taProjectDesc" prefHeight="100.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
                      <font>
-                        <Font size="18.0" />
+                        <Font name="SansSerif Regular" size="18.0" />
                      </font>
                   </TextArea>
                </children>

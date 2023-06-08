@@ -35,7 +35,7 @@
                      </children>
                   </VBox>
                   <Region HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="cbPlatform" onAction="#doPlatform" prefWidth="100.0" style="-fx-font-size: 16px;" />
+                  <ComboBox fx:id="cbPlatform" onAction="#doPlatform" prefWidth="115.0" style="-fx-font-size: 16px;" />
                </children>
                <padding>
                   <Insets bottom="4.0" left="6.0" right="6.0" top="4.0" />
