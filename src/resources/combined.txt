@@ -1,40 +1,4 @@
 ^JpGui Options
-  +Win PreRun:--win-prerun <file>
-          Windows batch file that is run BEFORE jpackage is executed.
-          This script could copy files to the input directory, for example.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
-  +Win PostRun:--win-postrun <file>
-          Widows batch file that will be run AFTER jpackage is executed.
-          This script could do some clean of files and/or directories.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
-  +Linux PreRun:--linux-prerun <file>
-          Linux shell file that is run BEFORE jpackage is executed.
-          This script could copy files to the input directory, for example.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
-  +Linux PostRun:--linux-postrun <file
-          Linux shell file that will be run AFTER jpackage  is executed.
-          This script could do some clean of files and/or directories.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
-  +MAC PreRun:--mac-prerun <file>
-          MAC shell file that is run BEFORE jpackage is executed.
-          This script could copy files to the input directory, for example.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
-  +MAC PostRun:--mac-postrun <file>
-          MAC shell file that will be run AFTER jpackage  is executed.
-          This script could do some clean of files and/or directories.
-          If script exits with a value of 1, then the main
-          script is aborted.
-;
   &Verbose Output:--jp-verbose
           If checked then --verbose is added to the jpackage command line.
 ;

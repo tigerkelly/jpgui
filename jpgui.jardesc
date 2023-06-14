@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="windows-1252" standalone="no"?>
 <jardesc>
-    <jar path="P:/jars/jpgui.jar"/>
+    <jar path="C:/Users/Kellyw/input_jpgui/jpgui.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/jpgui/jpgui.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>

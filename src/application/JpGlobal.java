@@ -24,8 +24,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class JpGlobal {
 
@@ -37,6 +39,18 @@ public class JpGlobal {
 	
 	private void initGlobals() {
 		appVersion = "1.1.1";
+		
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.contains("win") == true) {
+			osType = 1;
+		} else if (os.contains("nux") == true || 
+				os.contains("nix") == true || 
+				os.contains("aix") == true || 
+				os.contains("sunos") == true) {
+			osType = 2;
+		} else if (os.contains("mac") == true) {
+			osType = 3;
+		}
 		
 		String d = System.getProperty("user.home");
 		
@@ -54,7 +68,11 @@ public class JpGlobal {
 				try {
 					FileWriter myWriter = new FileWriter(f.getAbsolutePath());
 					myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
-					myWriter.write("\tworkdir = " + workDir.getAbsolutePath() + "\n\n");
+					myWriter.write("\tjpackage = jpackage\n");
+					myWriter.write("\twinBaseDir =\n");
+					myWriter.write("\tlinuxBaseDir =\n");
+					myWriter.write("\tmacBaseDir =\n");
+						
 					myWriter.write("[Projects]\n\n");
 					myWriter.close();
 				} catch (IOException e) {
@@ -67,21 +85,27 @@ public class JpGlobal {
 		
 		sysIni = new IniFile(f.getAbsolutePath());
 		
-		jpackagePath = sysIni.getString("System", "jpackagePath");
+		jpackagePath = sysIni.getString("System", "jpackage");
 		if (jpackagePath == null || jpackagePath.isBlank() == true)
 			jpackagePath = "jpackage";
 		
+		String winBase = sysIni.getString("System", "Win basedir");
+		if (winBase != null)
+			winBaseDir = new File(winBase);
+		
+		String linuxBase = sysIni.getString("System", "Linux basedir");
+		if (linuxBase != null)
+			linuxBaseDir = new File(linuxBase);
+		
+		String macBase = sysIni.getString("System", "Mac basedir");
+		if (macBase != null)
+			macBaseDir = new File(macBase);
+		
 		prjList = new HashMap<String, IniFile>();
+		orgList = new HashMap<String, IniFile>();
 		
 		prjList.clear();
-		Object[] keys = sysIni.getSectionKeys("Projects");
-		for (Object k : keys) {
-			String key = (String)k;
-			
-			IniFile ini = new IniFile(sysIni.getString("Projects", key));
-			
-			prjList.put(key, ini);
-		}
+		orgList.clear();
 		
 		sceneNav = new SceneNav();
 		
@@ -92,19 +116,26 @@ public class JpGlobal {
 	
 	public String appVersion = null;
 	public Map<String, IniFile> prjList = null;
+	public Map<String, IniFile> orgList = null;
 	
 	public boolean loadFlag = false;
+	public boolean leaveProgram = false;
 	
 	Alert alert = null;
 	public IniFile sysIni = null;
 	public IniFile currPrj = null;
 	public SceneNav sceneNav = null;
 	public File workDir = null;
+	public File winBaseDir = null;
+	public File linuxBaseDir = null;
+	public File macBaseDir = null;
+	public int osType = 0;
 	
 	public String projectOpen = null;
 	
 	public String jpackageVersion = null;
 	public String jpackagePath = null;
+	public String platform = null;
 	
 	public Label status = null;
 	
@@ -272,6 +303,16 @@ public class JpGlobal {
 		return false;
     }
 	
+	public void deleteDir(File file) {
+	    File[] contents = file.listFiles();
+	    if (contents != null) {
+	        for (File f : contents) {
+	            deleteDir(f);
+	        }
+	    }
+	    file.delete();
+	}
+	
 	public boolean isDigit(String s) {
 		boolean tf = true;
 		
@@ -323,6 +364,65 @@ public class JpGlobal {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public ButtonInfo centerDialog(Node node, String title, String msg, Image icon, ButtonInfo[] buttons) {
+		FXMLLoader loader = null;
+		YesNoOKController yno = null;
+		try {
+			Stage stage = new Stage();
+			stage.setTitle(title);
+
+			loader = new FXMLLoader(getClass().getResource("YesNoOK.fxml"));
+
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initStyle(StageStyle.UTILITY);
+			stage.setAlwaysOnTop(true);
+
+			stage.setScene(new Scene(loader.load()));
+			stage.hide();
+
+			Stage ps = (Stage) node.getScene().getWindow();
+			
+			yno = (YesNoOKController)loader.getController();
+			if (title != null)
+				yno.setTitle(title);
+			if (msg != null)
+				yno.setMessage(msg);
+			if (icon != null)
+				yno.setImage(icon);
+			if (buttons != null)
+				yno.addButtons(buttons);
+			
+//			for (ButtonInfo bi : buttons) {
+//				yno.addButton(bi.getText(), bi.getReValue(), bi.isDefaultButton());
+//			}
+
+			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
+				double stageWidth = newValue.doubleValue();
+				stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
+			};
+			ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
+				double stageHeight = newValue.doubleValue();
+				stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
+			};
+
+			stage.widthProperty().addListener(widthListener);
+			stage.heightProperty().addListener(heightListener);
+
+			// Once the window is visible, remove the listeners
+			stage.setOnShown(e2 -> {
+				stage.widthProperty().removeListener(widthListener);
+				stage.heightProperty().removeListener(heightListener);
+			});
+
+			stage.showAndWait();
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		return yno.getAction();
 	}
 	
 	public ProcessRet runProcess(String[] args) {

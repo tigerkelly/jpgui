@@ -16,19 +16,19 @@ import javafx.stage.Stage;
 public class OptionsController implements Initializable, RefreshScene {
 
 	@FXML
-	private AnchorPane aPane;
-	
-	@FXML
+    private AnchorPane aPane;
+
+    @FXML
     private Button btnCacnel;
 
     @FXML
     private Button btnSave;
-    
+
     @FXML
     private Button btnSelect;
 
     @FXML
-    private TextField tfJpackagePath;
+    private TextField tfJpackage;
     
     private JpGlobal jg = JpGlobal.getInstance();
 
@@ -45,17 +45,17 @@ public class OptionsController implements Initializable, RefreshScene {
     	Stage stage = (Stage) aPane.getScene().getWindow();
 		File fs = fc.showOpenDialog(stage);
 		if (fs != null) {
-			tfJpackagePath.setText(fs.getAbsolutePath());
+			tfJpackage.setText(fs.getAbsolutePath());
 		}
     }
     
     @FXML
     void doBtnSave(ActionEvent event) {
-    	String path = tfJpackagePath.getText();
+    	String path = tfJpackage.getText();
     	if (path == null || path.isBlank() == true) {
-    		jg.sysIni.addValuePair("System", "path", "jpackage");
+    		jg.sysIni.addValuePair("System", "jpackage", "jpackage");
     	} else {
-    		jg.sysIni.addValuePair("System", "path", path);
+    		jg.sysIni.addValuePair("System", "jpackage", path);
     	}
     	
     	jg.jpackagePath = path;
@@ -68,7 +68,11 @@ public class OptionsController implements Initializable, RefreshScene {
     
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
+		String path = jg.sysIni.getString("System", "jpackage");
+		if (path == null || path.isBlank() == true)
+			tfJpackage.setText("jpackage");
+		else
+			tfJpackage.setText(path);
 	}
 
 	@Override

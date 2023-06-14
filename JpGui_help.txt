@@ -1,0 +1,95 @@
+
+Getting the most out of JpGui.
+
+The JpGui program can keep track of options for all three types of platforms in a single
+set of configuration files but the jpackage program can only create install programs for a 
+platform while being run on that platform.
+
+Their are many configurations possible with jpackage so I am not able to help much with your project but
+send me an email and if I can help I will.
+
+Here is one idea on how to manage this issue.
+
+A file called JpGui.zip contains the JpGui's configuration files I used to create the JpGui install program,
+so use this on how to configure a new project.  Unzip this file into a temporary directory so that you can look it over.
+
+Store the JpGui configuration directory in a GIT repository that is accessible by all three platforms.
+
+Use the git program to start a JpGui configuration directory.
+	
+	- Start the JpGui program, this will create a directory in your home directory call JpGui.
+	- Use a terminal program or cmd shell to change the JpGui directory into a git repository.
+	    Change directory to the JpGui directory and execute
+	    git init
+	    Then use other git command to push it to a remote repository.  Their are many helpful examples
+	    on the internet to help you with this.
+	- One helpful thing is to modify the .gitignore file. If it does not exist then create it at the root of JpGui directory.
+	  Add the following lines and modify as needed for your project.
+	    # Compiled class file
+		*.class
+
+		# Log file
+		*.log
+		
+		# BlueJ files
+		*.ctxt
+		
+		# Mobile Tools for Java (J2ME)
+		.mtj.tmp/
+		
+		# Package Files #
+		*.jar
+		*.war
+		*.nar
+		*.ear
+		*.zip
+		*.tar.gz
+		*.rar
+		
+		# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+		hs_err_pid*
+		
+	    *.exe
+	    # The next lines ignores all files in the linux_out, max_out and win_out directories but keeps the .keepdir file.
+	    # This is because you can not add empty directories to a git repository.
+	    linux_out/*
+	    !linux_out/.keepdir
+	    mac_out/*
+	    !mac_out/.keepdir
+	    win_out/*
+	    !win_out/.keepdir
+	    
+	    linux_in/*
+	    !linux_in/.keepdir
+	    mac_in/*
+	    !mac_in/.keepdir
+	    win_in/*
+	    !win_in/.keepdir
+
+Let say you are on a Linux platform, you would do the following.
+
+	- Use git to update your JpGui configuration directory with the latest version from the git repository.
+	    Use 'git clone repoPath' for the first time and 'git pull' from that point forward.
+	    The 'git clone' repository must be in your users home directory on each platform.
+	- Use the JpGui program to make any changes needed for this platform and save the project.
+	- Edit the JpGui/projects/PrjName/liunx_prerun.sh and JpGui/projects/PrjName/linux_postrun.sh scripts.
+	  The PreRun scripts are mainly used to:
+	    Create support files like your project .jar file.
+	    And to copy files to the JpGui/projects/PrjName/Linux_in directory.
+	      Use the CP function in the prerun script(s) to copy the files to the linux_in, max_in or win_in directory.
+	  The linux_in directory holds files like the projects jar file, icon file and other files needed by your project.
+	- Use the Action->Run or Action->Script menu items to generate the script.
+	  If you used the Action->Run menu item than it creates the JpGui/projects/PrjName/PrjName_linux.sh script and runs it.
+	  Sadly the Action->Run will not produce any output until the script completes.  I will work on this issue.
+	  Else if you used the Action->Script menu item it just creates the JpGui/projects/PrjName/PrjName_linux.sh script
+	  so that you may run it by hand.
+	- Once done update the remote git repository with your changes.
+	- The linux_out, max-out and win_out directories will contain the executable install program the jpackage created.
+
+Some side notes.
+	- The reset button for each option only restores to the last save of the project.
+	- The Select file and Select directory buttons will be disabled if you are editing an option that is not the
+	  same as the OS the jpGui program is running on.  So if OS=Windows and Edit=Not_Windows then select buttons are disabled.
+	- To debug the windows batch scripts change the line 'echo off' to 'echo on'
+	- To debug the Linux and Mac scripts change the line '#!/usr/bin/sh' to '#!/usr/bin/sh -x' or '#!/usr/bin/sh -xv'
+	

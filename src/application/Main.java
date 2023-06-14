@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	private Pane mainPane = null;
-	private JpGlobal lg = JpGlobal.getInstance();
+	private JpGlobal jg = JpGlobal.getInstance();
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -21,10 +21,11 @@ public class Main extends Application {
 			primaryStage.setScene(createScene(loadMainPane()));
 			primaryStage.setMinWidth(750);
 			primaryStage.setMinHeight(800);
+			primaryStage.setOnCloseRequest((e) -> e.consume());		// disable Stage close button.
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		primaryStage.show();
 	}
 	
@@ -36,7 +37,7 @@ public class Main extends Application {
 	public void stop() {
 //		System.out.println("*** JpGui is Ending. ***");
 
-		SceneInfo si = lg.sceneNav.fxmls.get(lg.scenePeek());
+		SceneInfo si = jg.sceneNav.fxmls.get(jg.scenePeek());
 		if (si != null && si.controller instanceof RefreshScene) {
 			RefreshScene c = (RefreshScene) si.controller;
 			c.leaveScene();
@@ -60,8 +61,8 @@ public class Main extends Application {
 
 		SceneNavController mainController = loader.getController();
 
-		lg.sceneNav.setMainController(mainController);
-		lg.sceneNav.loadScene(SceneNav.JPGUI);
+		jg.sceneNav.setMainController(mainController);
+		jg.sceneNav.loadScene(SceneNav.JPGUI);
 
 		return mainPane;
 	}

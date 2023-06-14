@@ -35,6 +35,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -61,6 +63,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 
     @FXML
     private Label lblTitle;
+    
+    @FXML
+    private Label lblOs;
     
     @FXML
     private Label lblStatus;
@@ -122,6 +127,9 @@ public class JpGuiController implements Initializable, RefreshScene {
     @FXML
     private Menu menuHelp;
     
+    @FXML
+    private Button btnQuit;
+    
     private JpGlobal jg = JpGlobal.getInstance();
     ObservableList<String> platforms = null;
     Popup popup = null;
@@ -161,6 +169,32 @@ public class JpGuiController implements Initializable, RefreshScene {
 
     @FXML
     void doFileQuit(ActionEvent event) {
+    	Object[] objs = jg.prjList.keySet().toArray();
+
+		for (Object o : objs) {
+			String s = (String) o;
+			IniFile ini = jg.prjList.get(s);
+			if (ini.getChangedFlag() == true) {
+				ButtonInfo[] buttons = {
+						new ButtonInfo("Yes", 1, false),
+						new ButtonInfo("No", 2, false),
+						new ButtonInfo("Cancel", 3, true),
+					};
+					ButtonInfo bi = jg.centerDialog(aPane, "Save Changes", 
+							"You have unsaved changes.\n" +
+							"To NOT save changes select 'No' else\n" +
+							"select either 'Yes' or 'Cancel' and then used\n" +
+							"Menu File -> 'Save Project' or 'Save all Projects'.\n" +
+							"Save changes?", null, buttons);
+					if (bi.getReValue() == 1) {
+						return;
+					} else if (bi.getReValue() == 2) {
+					} else {
+						return;
+					}
+			}
+		}
+		
     	jg.setStatus("Quiting program");
     	Stage stage = (Stage) aPane.getScene().getWindow();
         stage.close();
@@ -229,6 +263,11 @@ public class JpGuiController implements Initializable, RefreshScene {
     		jg.sysIni.removeValuePair("Projects", tab.getText());
     		jg.sysIni.writeFile(true);
     		
+    		f = new File(System.getProperty("user.home") + File.separator + "JpGui" + 
+    					File.separator + "projects" + File.separator + tab.getText());
+    		if (f.exists() == true)
+    			jg.deleteDir(f);
+    		
     		tabPane.getTabs().remove(tab);
     		if (tabPane.getTabs().size() <= 0)
     			setMenu(true);
@@ -254,6 +293,7 @@ public class JpGuiController implements Initializable, RefreshScene {
     
     @FXML
     void doPlatform(ActionEvent event) {
+    	jg.platform = cbPlatform.getValue();
     	setFields();
     }
 
@@ -269,16 +309,21 @@ public class JpGuiController implements Initializable, RefreshScene {
 		
 		cbPlatform.setItems(platforms);
 		
-		
 		if (os.contains("win") == true) {
 			cbPlatform.setValue("Win");
+			jg.platform = "Win";
+			lblOs.setText("OS = Windows");
 		} else if (os.contains("nux") == true || 
 				os.contains("nix") == true || 
 				os.contains("aix") == true || 
 				os.contains("sunos") == true) {
 			cbPlatform.setValue("Linux");
+			jg.platform = "Linux";
+			lblOs.setText("OS = Linux");
 		} else if (os.contains("mac") == true) {
 			cbPlatform.setValue("Mac");
+			jg.platform = "Mac";
+			lblOs.setText("OS = Mac");
 		}
 		
 		jg.status = lblStatus;
@@ -330,6 +375,59 @@ public class JpGuiController implements Initializable, RefreshScene {
 						"projects" + File.separator + prjName + File.separator + prjName + ".ini");
 		
 		jg.currPrj = new IniFile(pf.getAbsolutePath());
+		
+		IniFile org = new IniFile(pf.getAbsolutePath());
+		
+		jg.orgList.put(prjName, org);
+		
+		if (jg.currPrj.sectionExists("JpGui Options") == false)
+			jg.currPrj.addSection("JpGui Options");
+		
+		String os = jg.platform.toLowerCase();
+		
+		if (jg.osType == 1) {
+			jg.currPrj.addValuePair("JpGui Options", "Win PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.bat");
+			jg.currPrj.addValuePair("JpGui Options", "Win PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.bat");
+			org.addValuePair("JpGui Options", "Win PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.bat");
+			org.addValuePair("JpGui Options", "Win PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.bat");
+		} else if (jg.osType == 2) {
+			jg.currPrj.addValuePair("JpGui Options", "Linux PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.sh");
+			jg.currPrj.addValuePair("JpGui Options", "Linux PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.sh");
+			org.addValuePair("JpGui Options", "Linux PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.sh");
+			org.addValuePair("JpGui Options", "Linux PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.sh");
+		} else if (jg.osType == 3) {
+			jg.currPrj.addValuePair("JpGui Options", "Mac PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.sh");
+			jg.currPrj.addValuePair("JpGui Options", "Linux PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.sh");
+			org.addValuePair("JpGui Options", "Mac PreRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.sh");
+			org.addValuePair("JpGui Options", "Linux PostRun Script", 
+					System.getProperty("user.home") + File.separator + "JpGui" + File.separator + 
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.sh");
+		}
+		
+		jg.currPrj.writeFile(true);
+		org.writeFile(true);
 		
 		jg.prjList.put(prjName, jg.currPrj);
 		
@@ -387,7 +485,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 	
 	private void loadTab(Tab tab) {
 		
-		String prjName = tab.getText();
+//		String prjName = tab.getText();
 		
 		AnchorPane ap1 = new AnchorPane();
 		ScrollPane sp = new ScrollPane();
@@ -420,9 +518,16 @@ public class JpGuiController implements Initializable, RefreshScene {
 		HBox hb = null;
 		String hColor = "#ffff00;";
 		
-		Font font1 = Font.font("SansSerif", 16.0);
+		InputStream undoImg = getClass().getResourceAsStream("/images/undo.png");
+		Image imgUndo = new Image(undoImg, 18, 18, false, false);
+		InputStream dirImg = getClass().getResourceAsStream("/images/folder.png");
+		Image imgDir = new Image(dirImg, 18, 18, false, false);
+		InputStream fileImg = getClass().getResourceAsStream("/images/file_icon.png");
+		Image imgFile = new Image(fileImg, 18, 18, false, false);
+		InputStream helpImg = getClass().getResourceAsStream("/images/help_icon.png");
+		Image imgHelp = new Image(helpImg, 18, 18, false, false);
 		
-		String os = cbPlatform.getValue();
+		Font font1 = Font.font("SansSerif", 16.0);
 		
 		try (InputStream in = getClass().getResourceAsStream("/resources/" + fn);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
@@ -437,6 +542,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 				if (line.startsWith("##") == true) {		// skip comments
 					continue;
 				}
+				
+				MyButton sb = null;
+				TextField tf = null;
+				CheckBox ckb = null;
 				
 				if (line.charAt(0) == '^') {
 //					System.out.println(line);
@@ -472,7 +581,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				}
 				
 				String[] arr = line.split(":");
-				String opt = arr[1].split(" ")[0];
+//				String opt = arr[1].split(" ")[0];
 				
 				Label lbl = new Label(arr[0].substring(1) + ":");
 				lbl.setUserData(arr[0].substring(1));
@@ -485,7 +594,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 				
 				if (line.charAt(0) == '&') {
 					
-					CheckBox ckb = new CheckBox(arr[0].substring(1));
+					ckb = new CheckBox(arr[0].substring(1));
+					ckb.setUserData(arr[0].substring(1));
 					ckb.setFont(font1);
 					ckb.setPrefWidth(250);
 					final TitledPane titledPane = tp;
@@ -498,43 +608,28 @@ public class JpGuiController implements Initializable, RefreshScene {
 							ObservableList<String> c = t.getStyleClass();
 							if (c.contains("dirty") == false)
 								t.getStyleClass().add("dirty");
+							jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue.toString());
 						}
 					    titledPane.setStyle("-fx-text-fill: " + hColor);
 					});
 					
 					hb.getChildren().addAll(lbl, ckb);
 					vb2.getChildren().add(hb);
-					if (opt.startsWith("--win") == true) {
-						if (os.equals("Win") == false) {
-							lbl.setDisable(true);
-							ckb.setDisable(true);
-						}
-					} else if (opt.startsWith("--linux") == true) {
-						if (os.equals("Linux") == false) {
-							lbl.setDisable(true);
-							ckb.setDisable(true);
-						}
-					} else if (opt.startsWith("--mac") == true) {
-						if (os.equals("Mac") == false) {
-							lbl.setDisable(true);
-							ckb.setDisable(true);
-						}
-					}
 				} else if (line.charAt(0) == '*') {
 					
-					TextField tf = new TextField();
+					tf = new TextField();
 					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
 						if (newValue != null) {
-//							System.out.println("textfield changed from " + oldValue + " to " + newValue);
 							Tab t = tabPane.getSelectionModel().getSelectedItem();
 							if (t != null) {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
+								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -544,85 +639,53 @@ public class JpGuiController implements Initializable, RefreshScene {
 					hb.getChildren().addAll(lbl, tf);
 					vb2.getChildren().add(hb);
 					
-					if (opt.startsWith("--win") == true) {
-						if (os.equals("Win") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-						}
-					} else if (opt.startsWith("--linux") == true) {
-						if (os.equals("Linux") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-						}
-					} else if (opt.startsWith("--mac") == true) {
-						if (os.equals("Mac") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-						}
-					}
-					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
 							popup.hide();
 					});
 				} else if (line.charAt(0) == '-') {
 					
-					TextField tf = new TextField();
+					tf = new TextField();
 					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
 						if (newValue != null) {
-//							System.out.println("textfield changed from " + oldValue + " to " + newValue);
 							Tab t = tabPane.getSelectionModel().getSelectedItem();
 							if (t != null) {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
+								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
 					
-					Button b1 = new Button("^");
-					b1.setStyle("-fx-font-size: 14px;");
-					b1.setPrefWidth(30.0);
-					b1.setOnAction((e) -> {
+					sb = new MyButton();
+					sb.setMyData("^");
+					sb.setGraphic(new ImageView(imgDir));
+					sb.setStyle("-fx-font-size: 14px;");
+					sb.setPrefWidth(30.0);
+					sb.setOnAction((e) -> {
+						Button b = (Button)e.getSource();
+						HBox hb2 = (HBox)b.getParent();
+						TextField textField = (TextField)hb2.getChildren().get(1);
 						Stage stage = (Stage) aPane.getScene().getWindow();
 						File df = dc.showDialog(stage);
 						if (df != null) {
-							tf.setText(df.getAbsolutePath());
+							textField.setText(df.getAbsolutePath());
 						}
 					});
 					
 					Tooltip tt = new Tooltip("Select a directory.");
 					tt.setStyle("-fx-font-size: 14px;");
-					b1.setTooltip(tt);
+					sb.setTooltip(tt);
 					
-					hb.getChildren().addAll(lbl, tf, b1);
+					hb.getChildren().addAll(lbl, tf);
 					vb2.getChildren().add(hb);
-					
-					if (opt.startsWith("--win") == true) {
-						if (os.equals("Win") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					} else if (opt.startsWith("--linux") == true) {
-						if (os.equals("Linux") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					} else if (opt.startsWith("--mac") == true) {
-						if (os.equals("Mac") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					}
 					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
@@ -630,62 +693,47 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 				} else if (line.charAt(0) == '+') {
 					
-					TextField tf = new TextField();
+					tf = new TextField();
 					tf.setFont(font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
 						if (newValue != null) {
-//							System.out.println("textfield changed from " + oldValue + " to " + newValue);
 							Tab t = tabPane.getSelectionModel().getSelectedItem();
 							if (t != null) {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
+								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
 					
-					Button b1 = new Button("^");
-					b1.setFont(font1);
-					b1.setPrefWidth(30.0);
-					b1.setOnAction((e) -> {
+					sb = new MyButton();
+					sb.setMyData("^");
+					sb.setGraphic(new ImageView(imgFile));
+					sb.setFont(font1);
+					sb.setPrefWidth(30.0);
+					sb.setOnAction((e) -> {
+						Button b = (Button)e.getSource();
+						HBox hb2 = (HBox)b.getParent();
+						TextField textField = (TextField)hb2.getChildren().get(1);
 						Stage stage = (Stage) aPane.getScene().getWindow();
-						File fs = fc.showOpenDialog(stage);
-						if (fs != null) {
-							tf.setText(fs.getAbsolutePath());
+						File df = fc.showOpenDialog(stage);
+						if (df != null) {
+							textField.setText(df.getAbsolutePath());
 						}
 					});
 					
 					Tooltip tt = new Tooltip("Select a file.");
 					tt.setFont(font1);
-					b1.setTooltip(tt);
+					sb.setTooltip(tt);
 					
-					hb.getChildren().addAll(lbl, tf, b1);
+					hb.getChildren().addAll(lbl, tf);
 					vb2.getChildren().add(hb);
-					
-					if (opt.startsWith("--win") == true) {
-						if (os.equals("Win") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					} else if (opt.startsWith("--linux") == true) {
-						if (os.equals("Linux") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					} else if (opt.startsWith("--mac") == true) {
-						if (os.equals("Mac") == false) {
-							lbl.setDisable(true);
-							tf.setDisable(true);
-							b1.setDisable(true);
-						}
-					}
 					
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
@@ -693,12 +741,45 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 				}
 				
+				// Add reset button.
+				
+				MyButton rs = new MyButton();
+				rs.setMyData("r");
+				rs.setPrefSize(18.0, 18.0);
+				rs.setGraphic(new ImageView(imgUndo));
+				rs.setFont(font1);
+				Tooltip tt2 = new Tooltip("Reset field.");
+				tt2.setFont(font1);
+				rs.setTooltip(tt2);
+				
+				final TitledPane tp2 = tp;
+				
+				rs.setOnMouseClicked((e) -> {
+					Button b = (Button)e.getSource();
+					HBox hb2 = (HBox)b.getParent();
+					if (hb2.getChildren().get(1) instanceof TextField) {
+						TextField tf2 = (TextField) hb2.getChildren().get(1);
+						tf2.setText((String)tf2.getUserData());
+						jg.currPrj.addValuePair(tp2.getText(), jg.platform + " " + (String)lbl.getUserData(), (String)tf2.getUserData());
+					}
+					if (hb2.getChildren().get(1) instanceof CheckBox) {
+						CheckBox ckb2 = (CheckBox) hb2.getChildren().get(1);
+						ckb2.setSelected((Boolean)ckb2.getUserData());
+						jg.currPrj.addValuePair(tp2.getText(), jg.platform + " " + (String)lbl.getUserData(), ckb2.getUserData().toString());
+					}
+						
+				});
+				
 				// Add Help button.
 				
-				Button qb = new Button("?");
+				MyButton qb = new MyButton();
+				qb.setMyData("?");
+				qb.setGraphic(new ImageView(imgHelp));
 				qb.setFont(font1);
 				qb.setOnAction((e) -> {
 					TextArea ta = (TextArea)popup.getContent().get(0);
+					ta.setPrefWidth(500.0);
+					ta.setPrefHeight(225.0);
 					
 					Button bh = (Button)e.getSource();
 					String help = (String)bh.getUserData();
@@ -714,7 +795,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 					}
 				});
 				
-				hb.getChildren().add(qb);
+				if (sb != null)
+					hb.getChildren().addAll(rs, sb, qb);
+				else
+					hb.getChildren().addAll(rs, qb);
 				
 				String txt = arr[1];
 				String line2 = null;
@@ -733,7 +817,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
 		
-		loadFields(prjName);
+		setFields();
 	}
  	
 	private void loadFields(String prjName) {
@@ -768,6 +852,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 			
 			VBox vb2 = (VBox)p.getContent();
 			
+			TextField tf = null;
+			CheckBox ckb = null;
+			
 			ObservableList<Node> nodes = vb2.getChildren();
 			for (Node n : nodes) {
 				HBox hb = (HBox)n;
@@ -777,14 +864,29 @@ public class JpGuiController implements Initializable, RefreshScene {
 				Label lbl = (Label)fields.get(0);
 				
 				if (fields.get(1) instanceof TextField) {
-					TextField tf = (TextField)fields.get(1);
+					tf = (TextField)fields.get(1);
 					String fld = (String) lbl.getUserData();
-					String value = ini.getString(sec, fld);
+					String value = ini.getString(sec, jg.platform + " " + fld);
 					tf.setText(value);
+					tf.setUserData(value);
 				} else if (fields.get(1) instanceof CheckBox) {
-					CheckBox ckb = (CheckBox)fields.get(1);
-					boolean yesNo = ini.getBoolean(sec, lbl.getUserData());
+					ckb = (CheckBox)fields.get(1);
+					boolean yesNo = ini.getBoolean(sec, jg.platform + " " + lbl.getUserData());
 					ckb.setSelected(yesNo);
+					ckb.setUserData(yesNo);
+				} 
+				
+				if (fields.get(2) instanceof Button) {		// Undo button
+					Button b = (Button)fields.get(2);
+					String fld = (String) lbl.getUserData();
+					UserDataInfo udi = new UserDataInfo();
+					if (tf != null)
+						udi.setTf(tf);
+					if (ckb != null)
+						udi.setCkb(ckb);
+					String value = ini.getString(sec, jg.platform + " " + fld);
+					udi.setData(value);
+					b.setUserData(udi);
 				}
 			}
 		}
@@ -794,7 +896,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 	
 	private void saveProject(Tab tab) {
 		if (tab == null) {
-			jg.addStatus("Save, no project tab selected.");
+			jg.addStatus("Save, No project tab selected.");
 			return;
 		}
 		
@@ -807,6 +909,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 		if (ini == null)
 			return;
 		
+//		System.out.println(ini.stringFile(null));
+		
 		tab.getStyleClass().remove("dirty");
 		
 		ScrollPane sp = (ScrollPane)tab.getContent();
@@ -818,10 +922,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 		
 		for (TitledPane p : panes) {
 			String sec = p.getText();
-			if (ini.sectionExists(sec) == true)
-				ini.removeSection(sec);
-			
-			ini.addSection(sec);
+			if (ini.sectionExists(sec) == false)
+				ini.addSection(sec);
 			
 			p.setStyle("-fx-text-fill: black;");
 			
@@ -839,15 +941,17 @@ public class JpGuiController implements Initializable, RefreshScene {
 					String value = tf.getText();
 					if (value == null || value.isBlank())
 						value = "";
-					ini.addValuePair(sec, (String)lbl.getUserData(), value);
+					ini.addValuePair(sec, jg.platform + " " + (String)lbl.getUserData(), value);
 				} else if (fields.get(1) instanceof CheckBox) {
 					CheckBox ckb = (CheckBox)fields.get(1);
-					ini.addValuePair(sec, (String)lbl.getUserData(), ckb.isSelected() + "");
+					ini.addValuePair(sec, jg.platform + " " + (String)lbl.getUserData(), ckb.isSelected() + "");
 				}
 			}
 		}
 		
 		ini.writeFile(true);
+		
+		jg.prjList.put(prjName, ini);
 	}
 	
 	private File buildScript() {
@@ -862,18 +966,24 @@ public class JpGuiController implements Initializable, RefreshScene {
 		
     	boolean isWin = false;
     	String fn = tab.getText();
-    	String prjname = tab.getText();
+    	String prjName = tab.getText();
     	
-		if (os.equals("win") == true) {
-			fn += ".bat";
+		if (os.contains("win") == true) {
+			fn += "_win.bat";
 			isWin = true;
-		} else if (os.equals("linux") == true || os.equals("mac") == true) {
-			fn += ".sh";
+		} else if (os.contains("nux") == true || 
+				os.contains("nix") == true || 
+				os.contains("aix") == true || 
+				os.contains("sunos") == true) {
+			fn += "linux_.sh";
+			isWin = false;
+		} else if (os.contains("mac") == true) {
+			fn += "mac_.sh";
 			isWin = false;
 		}
 		
 		File f = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator + "projects" + 
-					File.separator + prjname + File.separator + fn);
+					File.separator + prjName + File.separator + fn);
 		
 		IniFile ini = jg.prjList.get(tab.getText());
 		if (ini == null)
@@ -893,8 +1003,6 @@ public class JpGuiController implements Initializable, RefreshScene {
 			String dest = null;
 			String appName = null;
 			String appVersion = null;
-			String preRun = null;
-			String postRun = null;
 			boolean verboseFlag = false;
 			boolean jpackageVerFlag = false;
 			
@@ -942,14 +1050,6 @@ public class JpGuiController implements Initializable, RefreshScene {
 							appVersion = value;
 						} else if (lbl.getText().toLowerCase().equals("jpackage path:") == true) {
 							jg.jpackagePath = value;
-						} else if (lbl.getText().toLowerCase().equals("win prerun:") == true ||
-								lbl.getText().toLowerCase().equals("linux prerun:") == true ||
-								lbl.getText().toLowerCase().equals("mac prerun:") == true) {
-							preRun = value;
-						} else if (lbl.getText().toLowerCase().equals("win postrun:") == true ||
-								lbl.getText().toLowerCase().equals("linux postrun:") == true ||
-								lbl.getText().toLowerCase().equals("mac postrun:") == true) {
-							postRun = value;
 						}
 						if (value != null && value.isBlank() == false) {
 							if (paneName.equals("jpgui options") == true) {
@@ -1024,37 +1124,36 @@ public class JpGuiController implements Initializable, RefreshScene {
 			
 			if (isWin == true) {
 				fw.write("@echo off\nrem Batch file to execute a jpackage command line.\nrem Generated by the JpGui program.\n\n");
-				fw.write("echo Deleting " + appName + "-" + appVersion + ".exe\n");
-				fw.write("del /F /Q \"" + dest + File.separator + appName + "-" + appVersion + ".exe\"\n");
-				fw.write("if exist \"" + dest + File.separator + appName + "-" + appVersion + ".exe\" goto errdel\n\n");
-				fw.write("goto next2\n\n");
-				fw.write(":errdel\n");
-				fw.write("echo Failed to delete file.\n");
-				fw.write("exit /b 1\n\n");
-				fw.write(":next2\n\n");
+				fw.write("if exist \"" + dest + File.separator + appName + "-" + appVersion + ".exe\" (\n");
+				fw.write("    echo Deleting old " + appName + "-" + appVersion + ".exe\n");
+				fw.write("    del /F /Q \"" + dest + File.separator + appName + "-" + appVersion + ".exe\"\n");
+				fw.write("    if exist \"" + dest + File.separator + appName + "-" + appVersion + ".exe\" (\n");
+				fw.write("        echo Delete of " + appName + "-" + appVersion + ".exe FAILED.\n");
+				fw.write("        exit /b 1\n");
+				fw.write("    )\n");
+				fw.write(")\n\n");
 			} else {
-				fw.write("#!/usr/sh\n# Shell script to execute a jpackage command line.\n# Generated by the JpGui program.\n\n");
-				fw.write("echo Deleting " + appName + "-" + appVersion + "\n");
+				fw.write("#!/usr/bin/sh\n# Shell script to execute a jpackage command line.\n# Generated by the JpGui program.\n\n");
+				fw.write("echo Deleting old " + appName + "-" + appVersion + "\n");
 				fw.write("rm -rf " + dest + File.separator + appName + "-" + appVersion + "\n\n");
 				fw.write("if [ -f \"" + dest + File.separator + appName + "-" + appVersion + "\" ]; then\n");
-				fw.write("   echo Failed to delete file.\n");
+				fw.write("   echo Failed to delete \""  + dest + File.separator + appName + "-" + appVersion + "\"\n");
 				fw.write("   exit 1\n");
 				fw.write("fi\n\n");
 			}
+			
+			String preRun = jg.currPrj.getString("JpGui Options", jg.platform + " PreRun Script");
+			String postRun = jg.currPrj.getString("JpGui Options", jg.platform + " PostRun Script");;
 			
 			if (preRun != null && preRun.isBlank() == false) {
 				fw.write("echo Executing PreRun Script.\n");
 				if (isWin == true) {
 					fw.write("call \"" + preRun + "\"\n\n");
-					fw.write("if errorlevel 1 goto errmsg1\n\n");
+					fw.write("if %errorlevel% neq 0 (\n");
+					fw.write("    echo PostRun Script FAILED.\n");
+					fw.write("    exit /b 1\n");
+					fw.write(")\n\n");
 					fw.write("echo Done executing PreRun Script.\n\n");
-					fw.write("goto next1\n\n");
-					
-					fw.write(":errmsg1\n");
-					fw.write("echo " + postRun + " FAILED.\n");
-					fw.write("exit /b 1\n\n");
-					
-					fw.write(":next1\n\n");
 				} else {
 					fw.write(preRun + "\n\n");
 					fw.write("if [ $? -ne 0 ]; then\n");
@@ -1068,20 +1167,34 @@ public class JpGuiController implements Initializable, RefreshScene {
 				fw.write("echo Jpackage: " + jg.jpackageVersion + "\n\n");
 			}
 			
+			fw.write("echo Creating Application Version: " + appVersion + "\n\n");
+			
 			fw.write("echo Running jpackage command line.  This can take a few...\n");
 			fw.write(cmdLine + "\n\n");
+			
+			if (isWin == true) {
+				fw.write("if %errorlevel% neq 0 (\n");
+				fw.write("    echo *** Jpackage failed. ***\n");
+				fw.write("    exit /b 1\n");
+				fw.write(")\n\n");
+				fw.write("echo Finished executing jpackage command line.\n\n");
+			} else {
+				fw.write("if [ $? -ne 0 ]; then\n");
+				fw.write("    echo *** Jpackage failed. ***\n");
+				fw.write("    exit 1\n");
+				fw.write("fi\n\n");
+				fw.write("echo Finished executing " + prjName + ".sh\n\n");
+			}
 			
 			if (postRun != null && postRun.isBlank() == false) {
 				fw.write("echo Executing PostRun Script.\n");
 				if (isWin == true) {
 					fw.write("call \"" + postRun + "\"\n\n");
-					fw.write("if errorlevel 1 goto errmsg2\n\n");
+					fw.write("if %errorlevel% neq 0 (\n");
+					fw.write("    echo PostRun Script FAILED.\n");
+					fw.write("    exit /b 1\n");
+					fw.write(")\n\n");
 					fw.write("echo Done executing PostRun Script.\n\n");
-					fw.write("goto finished\n\n");
-					
-					fw.write(":errmsg2\n");
-					fw.write("echo " + postRun + " FAILED.\n");
-					fw.write("exit /b 1\n\n");
 				} else {
 					fw.write(postRun + "\n\n");
 					fw.write("if [ $? -ne 0 ]; then\n");
@@ -1091,11 +1204,109 @@ public class JpGuiController implements Initializable, RefreshScene {
 				}
 			}
 			
-			if (isWin == true) {
-				fw.write(":finished\nexit /b 0\n");
-			} else {
-				fw.write("exit 0\n");
-			}
+			File prerun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.bat");
+	    	
+	    	if (prerun.exists() == false) {
+	    		try {
+					FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
+					w.write("echo off\nrem PreRun script for project " + prjName + "\n\n");
+					w.write("rem Place your code below this line.\n");
+					w.write("rem Example: CP filename retcode\n");
+					w.write("rem          if %retcode% neq 0 goto errAbort\n");
+					w.write("rem Keep your code above this line.\n\n");
+					w.write("exit /b 0\n\n");
+					w.write(":errAbort\n");
+					w.write("echo Abort batch file.\n");
+					w.write("exit /b 1\n\n");
+					
+					w.write("rem Function to copy to input directory (jpackage --input).  Usage: call :CP filepath\n");
+					w.write(":CP\n");
+					w.write("set %~2=0\n");
+					w.write("copy %1 " + jg.currPrj.getString("Application Image Options", jg.platform + " Input") + " >nul 2>&1\n");
+					w.write("if %errorlevel% neq 0 (\n");
+					w.write("    echo PreRun: Copy of %1 failed.\n");
+					w.write("    set %~2=1\n");
+					w.write(")\n");
+					w.write("exit /b 0\n");
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	    	}
+	    	
+	    	prerun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
+					"projects" + File.separator + prjName + File.separator + os + "_prerun.sh");
+	    	
+	    	if (prerun.exists() == false) {
+	    		try {
+					FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
+					w.write("#! /usr/bin/sh\n# PreRun script for project " + prjName + "\n\n");
+					w.write("# Place your code below this line.\n");
+					w.write("# Keep your code above this line.\n\n");
+					w.write("exit 0\n\n");
+					
+					w.write("# Function to copy to input directory (jpackage --input).  Usage: CP filepath\n");
+					w.write("CP()\n{\n");
+					w.write("cp $1 " + jg.currPrj.getString("Application Image Options", jg.platform + " Input") + " >/dev/null 2>&1\n");
+					w.write("if [ $? -ne 0 ]; then\n");
+					w.write("    echo PreRun: Copy of $1 failed.\n");
+					w.write("    exit 1\n");
+					w.write("fi\n}\n");
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	    	}
+	    	
+	    	File postrun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.bat");
+	    	
+	    	if (postrun.exists() == false) {
+	    		try {
+					FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
+					w.write("echo off\nrem PostRun script for project " + prjName + "\n\n");
+					w.write("rem Place your code below this line.\n");
+					w.write("rem Keep your code above this line.\n\n");
+					w.write("exit /b 0\n\n");
+					
+					w.write("rem Function to delete files.  Usage: call :REMOVE filepath\n");
+					w.write(":REMOVE\n");
+					w.write("del %1 >nul 2>&1\n");
+					w.write("if %errorlevel% neq 0 (\n");
+					w.write("    echo PostRun: Delete of %1 failed.\n");
+					w.write("    exit /b 1\n");
+					w.write(")\n");
+					w.write("exit /b 0\n");
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	    	}
+	    	
+	    	postrun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
+					"projects" + File.separator + prjName + File.separator + os + "_postrun.sh");
+	    	
+	    	if (postrun.exists() == false) {
+	    		try {
+					FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
+					w.write("#! /usr/bin/sh\n# PostRun script for project " + prjName + "\n\n");
+					w.write("# Place your code below this line.\n");
+					w.write("# Keep your code above this line.\n\n");
+					w.write("exit 0\n\n");
+					
+					w.write("# Function to delete files.  Usage: REMOVE filepath\n");
+					w.write("REMOVE()\n{\n");
+					w.write("rm -rf $1 >/dev/null 2>&1\n");
+					w.write("if [ $? -ne 0 ]; then\n");
+					w.write("    echo PostRun: Delete of %1 failed.\n");
+					w.write("    exit 1\n");
+					w.write("fi\n}\n");
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	    	}
 			
 			if (isWin == true)
 				jg.addStatus("Batch file created.");
@@ -1139,6 +1350,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 		if (tab == null)
 			return;
 		
+		String prjName = tab.getText();
 		String os = cbPlatform.getValue().toLowerCase();
 		
 		ScrollPane sp = (ScrollPane)tab.getContent();
@@ -1161,8 +1373,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 				Label lb = null;
 				TextField tf = null;
 				CheckBox ckb = null;
-				Button sel = null;
-				Button help = null;
+				MyButton rs = null;
+				MyButton sel = null;
+				MyButton help = null;
 				
 				for (Node fld : fields) {
 					if (fld instanceof Label) {
@@ -1171,12 +1384,15 @@ public class JpGuiController implements Initializable, RefreshScene {
 						tf = (TextField)fld;
 					} else if (fld instanceof CheckBox) {
 						ckb = (CheckBox)fld;
-					} else if (fld instanceof Button) {
-						Button b = (Button)fld;
-						if (b.getUserData() != null)
+					} else if (fld instanceof MyButton) {
+						MyButton b = (MyButton)fld;
+						if (b.getMyData().equals("?") == true)
 							help = b;
-						else
+						else if (b.getMyData().equals("r") == true) {
+							rs = b;
+						} else if (b.getMyData().equals("^") == true) {
 							sel = b;
+						}
 					}
 					
 					if (help != null) {
@@ -1188,15 +1404,23 @@ public class JpGuiController implements Initializable, RefreshScene {
 									tf.setDisable(true);
 								if (ckb != null)
 									ckb.setDisable(true);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(true);
+								if (sel != null && jg.osType != 3)
 									sel.setDisable(true);
+								else if (sel != null)
+									sel.setDisable(false);
 							} else {
 								lb.setDisable(false);
 								if (tf != null)
 									tf.setDisable(false);
 								if (ckb != null)
 									ckb.setDisable(false);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(false);
+								if (sel != null && jg.osType != 1)
+									sel.setDisable(true);
+								else if (sel != null)
 									sel.setDisable(false);
 							}
 						} else if (os.equals("linux") == true) {
@@ -1206,15 +1430,23 @@ public class JpGuiController implements Initializable, RefreshScene {
 									tf.setDisable(true);
 								if (ckb != null)
 									ckb.setDisable(true);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(true);
+								if (sel != null && jg.osType != 2)
 									sel.setDisable(true);
+								else if (sel != null)
+									sel.setDisable(false);
 							} else {
 								lb.setDisable(false);
 								if (tf != null)
 									tf.setDisable(false);
 								if (ckb != null)
 									ckb.setDisable(false);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(false);
+								if (sel != null && jg.osType != 2)
+									sel.setDisable(true);
+								else if (sel != null)
 									sel.setDisable(false);
 							}
 						} else if (os.equals("mac") == true) {
@@ -1224,15 +1456,23 @@ public class JpGuiController implements Initializable, RefreshScene {
 									tf.setDisable(true);
 								if (ckb != null)
 									ckb.setDisable(true);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(true);
+								if (sel != null && jg.osType != 3)
 									sel.setDisable(true);
+								else if (sel != null)
+									sel.setDisable(false);
 							} else {
 								lb.setDisable(false);
 								if (tf != null)
 									tf.setDisable(false);
 								if (ckb != null)
 									ckb.setDisable(false);
-								if (sel != null)
+								if (rs != null)
+									rs.setDisable(false);
+								if (sel != null && jg.osType != 3)
+									sel.setDisable(true);
+								else if (sel != null)
 									sel.setDisable(false);
 							}
 						}
@@ -1240,6 +1480,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 				}
 			}
 		}
+		
+		loadFields(prjName);
 	}
 	
 	@Override
