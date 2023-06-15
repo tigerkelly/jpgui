@@ -1200,7 +1200,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					fw.write("if [ $? -ne 0 ]; then\n");
 					fw.write("    echo post run script FAILED.\n");
 					fw.write("    exit 1\n");
-					fw.write("fi\n\n");
+					fw.write("fi\n\nexit 0\n");
 				}
 			}
 			
@@ -1253,7 +1253,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						w.write("if [ $? -ne 0 ]; then\n");
 						w.write("    echo PreRun: Copy of $1 failed.\n");
 						w.write("    exit 1\n");
-						w.write("fi\n}\n");
+						w.write("fi\n}\n\nexit 0\n");
 						w.close();
 						prerun.setExecutable(true);
 					} catch (IOException e) {
@@ -1305,7 +1305,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						w.write("if [ $? -ne 0 ]; then\n");
 						w.write("    echo PostRun: Delete of %1 failed.\n");
 						w.write("    exit 1\n");
-						w.write("fi\n}\n");
+						w.write("fi\n}\n\nexit 0\n\n");
 						w.close();
 						postrun.setExecutable(true);
 					} catch (IOException e) {

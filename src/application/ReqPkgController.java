@@ -36,14 +36,17 @@ public class ReqPkgController implements Initializable, RefreshScene {
 			taText.appendText("  The WiX Toolset 3.0 or greater.\n");
 			taText.appendText("  From the following URL. ");
 			taText.appendText("    https://wixtoolset.org\n");
-			taText.appendText("  The Java JDK 8.0 or greater version of java.\n\n");
+			taText.appendText("  The Java JDK 8.0 or greater version of java.\n");
+			taText.appendText("  You will have to install/download JavaFX separately.\n\n");
 
 			taText.appendText("Linux:\n");
 			taText.appendText("  For Unix like OSes you will need the following installed.\n");
 			taText.appendText("  On Linix: RPM and DEB\n");
 			taText.appendText("  On Red Hat Linux: rpm-build package.\n");
 			taText.appendText("  On Ubuntu: fakeroot package.\n");
-			taText.appendText("  The Java JDK 8.0 or greater version of java.\n\n");
+			taText.appendText("  The Java JDK 8.0 or greater version of java.\n");
+			taText.appendText("  Also make sure that the Java version matches th JavafX version.\n");
+			taText.appendText("  You will have to install/download JavaFX separately.\n\n");
 			
 			taText.appendText("MAC:\n");
 			taText.appendText("  For Apple MAC you will need the following installed.\n");
