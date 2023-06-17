@@ -1207,33 +1207,35 @@ public class JpGuiController implements Initializable, RefreshScene {
 			File prerun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
 					"projects" + File.separator + prjName + File.separator + os + "_prerun.bat");
 	    	
-	    	if (prerun.exists() == false) {
-	    		try {
-					FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
-					w.write("echo off\nrem PreRun script for project " + prjName + "\n\n");
-					w.write("rem Place your code below this line.\n");
-					w.write("rem Example: CP filename retcode\n");
-					w.write("rem          if %retcode% neq 0 goto errAbort\n");
-					w.write("rem Keep your code above this line.\n\n");
-					w.write("exit /b 0\n\n");
-					w.write(":errAbort\n");
-					w.write("echo Abort batch file.\n");
-					w.write("exit /b 1\n\n");
-					
-					w.write("rem Function to copy to input directory (jpackage --input).  Usage: call :CP filepath\n");
-					w.write(":CP\n");
-					w.write("set %~2=0\n");
-					w.write("copy %1 " + jg.currPrj.getString("Application Image Options", jg.platform + " Input") + " >nul 2>&1\n");
-					w.write("if %errorlevel% neq 0 (\n");
-					w.write("    echo PreRun: Copy of %1 failed.\n");
-					w.write("    set %~2=1\n");
-					w.write(")\n");
-					w.write("exit /b 0\n");
-					w.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	    	}
+			if (isWin == true) {
+		    	if (prerun.exists() == false) {
+		    		try {
+						FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
+						w.write("echo off\nrem PreRun script for project " + prjName + "\n\n");
+						w.write("rem Place your code below this line.\n");
+						w.write("rem Example: CP filename retcode\n");
+						w.write("rem          if %retcode% neq 0 goto errAbort\n");
+						w.write("rem Keep your code above this line.\n\n");
+						w.write("exit /b 0\n\n");
+						w.write(":errAbort\n");
+						w.write("echo Abort batch file.\n");
+						w.write("exit /b 1\n\n");
+						
+						w.write("rem Function to copy to input directory (jpackage --input).  Usage: call :CP filepath\n");
+						w.write(":CP\n");
+						w.write("set %~2=0\n");
+						w.write("copy %1 " + jg.currPrj.getString("Application Image Options", jg.platform + " Input") + " >nul 2>&1\n");
+						w.write("if %errorlevel% neq 0 (\n");
+						w.write("    echo PreRun: Copy of %1 failed.\n");
+						w.write("    set %~2=1\n");
+						w.write(")\n");
+						w.write("exit /b 0\n");
+						w.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		    	}
+			}
 	    	
 	    	if (isWin == false) {
 		    	prerun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
@@ -1243,17 +1245,17 @@ public class JpGuiController implements Initializable, RefreshScene {
 		    		try {
 						FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
 						w.write("#! /usr/bin/sh\n# PreRun script for project " + prjName + "\n\n");
-						w.write("# Place your code below this line.\n");
-						w.write("# Keep your code above this line.\n\n");
-						w.write("exit 0\n\n");
 						
-						w.write("# Function to copy to input directory (jpackage --input).  Usage: CP filepath\n");
-						w.write("CP()\n{\n");
+						w.write("# Function to copy to input directory (jpackage --input).  Usage: COPY filepath\n");
+						w.write("COPY(){\n");
 						w.write("cp $1 " + jg.currPrj.getString("Application Image Options", jg.platform + " Input") + " >/dev/null 2>&1\n");
 						w.write("if [ $? -ne 0 ]; then\n");
 						w.write("    echo PreRun: Copy of $1 failed.\n");
 						w.write("    exit 1\n");
-						w.write("fi\n}\n\nexit 0\n");
+						w.write("fi\n}\n\n");
+						w.write("# Place your code below this line.\n");
+						w.write("# Keep your code above this line.\n\n");
+						w.write("exit 0\n\n");
 						w.close();
 						prerun.setExecutable(true);
 					} catch (IOException e) {
@@ -1265,26 +1267,28 @@ public class JpGuiController implements Initializable, RefreshScene {
 	    	File postrun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
 					"projects" + File.separator + prjName + File.separator + os + "_postrun.bat");
 	    	
-	    	if (postrun.exists() == false) {
-	    		try {
-					FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
-					w.write("echo off\nrem PostRun script for project " + prjName + "\n\n");
-					w.write("rem Place your code below this line.\n");
-					w.write("rem Keep your code above this line.\n\n");
-					w.write("exit /b 0\n\n");
-					
-					w.write("rem Function to delete files.  Usage: call :REMOVE filepath\n");
-					w.write(":REMOVE\n");
-					w.write("del %1 >nul 2>&1\n");
-					w.write("if %errorlevel% neq 0 (\n");
-					w.write("    echo PostRun: Delete of %1 failed.\n");
-					w.write("    exit /b 1\n");
-					w.write(")\n");
-					w.write("exit /b 0\n");
-					w.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+	    	if (isWin == true) {
+		    	if (postrun.exists() == false) {
+		    		try {
+						FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
+						w.write("echo off\nrem PostRun script for project " + prjName + "\n\n");
+						w.write("rem Place your code below this line.\n");
+						w.write("rem Keep your code above this line.\n\n");
+						w.write("exit /b 0\n\n");
+						
+						w.write("rem Function to delete files.  Usage: call :REMOVE filepath\n");
+						w.write(":REMOVE\n");
+						w.write("del %1 >nul 2>&1\n");
+						w.write("if %errorlevel% neq 0 (\n");
+						w.write("    echo PostRun: Delete of %1 failed.\n");
+						w.write("    exit /b 1\n");
+						w.write(")\n");
+						w.write("exit /b 0\n");
+						w.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		    	}
 	    	}
 	    	
 	    	if (isWin == false) {
@@ -1295,17 +1299,17 @@ public class JpGuiController implements Initializable, RefreshScene {
 		    		try {
 						FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
 						w.write("#! /usr/bin/sh\n# PostRun script for project " + prjName + "\n\n");
-						w.write("# Place your code below this line.\n");
-						w.write("# Keep your code above this line.\n\n");
-						w.write("exit 0\n\n");
 						
 						w.write("# Function to delete files.  Usage: REMOVE filepath\n");
-						w.write("REMOVE()\n{\n");
+						w.write("REMOVE(){\n");
 						w.write("rm -rf $1 >/dev/null 2>&1\n");
 						w.write("if [ $? -ne 0 ]; then\n");
 						w.write("    echo PostRun: Delete of %1 failed.\n");
 						w.write("    exit 1\n");
-						w.write("fi\n}\n\nexit 0\n\n");
+						w.write("fi\n}\n\n");
+						w.write("# Place your code below this line.\n");
+						w.write("# Keep your code above this line.\n\n");
+						w.write("exit 0\n\n");
 						w.close();
 						postrun.setExecutable(true);
 					} catch (IOException e) {
