@@ -501,6 +501,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 		vb1.getChildren().add(accordion);
 		tabPane.getTabs().add(tab);
 		
+		tabPane.getSelectionModel().select(tab);
+		
 		VBox.setVgrow(sp, Priority.ALWAYS);
 		VBox.setVgrow(vb1, Priority.ALWAYS);
 		VBox.setVgrow(accordion, Priority.ALWAYS);
@@ -821,10 +823,12 @@ public class JpGuiController implements Initializable, RefreshScene {
 	}
  	
 	private void loadFields(String prjName) {
+		
 		IniFile ini = jg.prjList.get(prjName);
 		
-		if (ini == null)
+		if (ini == null) {
 			return;
+		}
 		
 		ObservableList<Tab> tabs = tabPane.getTabs();
 		
@@ -1213,7 +1217,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						FileWriter w = new FileWriter(prerun.getAbsolutePath(), false);
 						w.write("echo off\nrem PreRun script for project " + prjName + "\n\n");
 						w.write("rem Place your code below this line.\n");
-						w.write("rem Example: CP filename retcode\n");
+						w.write("rem Example: call :CP filename retcode\n");
 						w.write("rem          if %retcode% neq 0 goto errAbort\n");
 						w.write("rem Keep your code above this line.\n\n");
 						w.write("exit /b 0\n\n");
@@ -1273,6 +1277,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 						FileWriter w = new FileWriter(postrun.getAbsolutePath(), false);
 						w.write("echo off\nrem PostRun script for project " + prjName + "\n\n");
 						w.write("rem Place your code below this line.\n");
+						w.write("rem Example: call :REMOVE filename retcode\n");
+						w.write("rem          if %retcode% neq 0 goto errAbort\n");
 						w.write("rem Keep your code above this line.\n\n");
 						w.write("exit /b 0\n\n");
 						
