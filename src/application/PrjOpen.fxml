@@ -10,12 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane fx:id="aPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/1" fx:controller="application.PrjOpenController">
+<AnchorPane fx:id="aPane" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PrjOpenController">
    <children>
       <VBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" spacing="4.0">
+            <HBox alignment="CENTER_LEFT" spacing="4.0">
                <children>
                   <Label text="Open Project">
                      <font>

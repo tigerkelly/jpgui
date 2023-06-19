@@ -38,7 +38,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.6";
+		appVersion = "1.1.7";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -364,6 +364,46 @@ public class JpGlobal {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public FXMLLoader loadScene(Node node, String fxml, String title, String data) {
+		FXMLLoader loader = null;
+		try {
+			Stage stage = new Stage();
+			stage.setTitle(title);
+
+			loader = new FXMLLoader(getClass().getResource(fxml));
+
+			stage.initModality(Modality.APPLICATION_MODAL);
+
+			stage.setScene(new Scene(loader.load()));
+			stage.hide();
+
+			Stage ps = (Stage) node.getScene().getWindow();
+
+			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
+				double stageWidth = newValue.doubleValue();
+				stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
+			};
+			ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
+				double stageHeight = newValue.doubleValue();
+				stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
+			};
+
+			stage.widthProperty().addListener(widthListener);
+			stage.heightProperty().addListener(heightListener);
+
+			// Once the window is visible, remove the listeners
+			stage.setOnShown(e2 -> {
+				stage.widthProperty().removeListener(widthListener);
+				stage.heightProperty().removeListener(heightListener);
+			});
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		return loader;
 	}
 	
 	public ButtonInfo centerDialog(Node node, String title, String msg, Image icon, ButtonInfo[] buttons) {

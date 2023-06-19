@@ -71,6 +71,13 @@
                         <MenuItem fx:id="mFileQuit" mnemonicParsing="false" onAction="#doFileQuit" text="Quit" />
                   </items>
                 </Menu>
+                  <Menu fx:id="menuScripts" mnemonicParsing="false" text="Scripts">
+                    <items>
+                      <MenuItem fx:id="mScriptsEditPreRun" mnemonicParsing="false" onAction="#doScriptsEditPreRun" text="Edit PreRun" />
+                        <MenuItem fx:id="mScriptsEditPstRun" mnemonicParsing="false" onAction="#doScritpsEditPostRun" text="Edit PostRun" />
+                        <MenuItem fx:id="mScriptsEditMain" mnemonicParsing="false" onAction="#doScritpsEditMain" text="Edit Main" />
+                    </items>
+                  </Menu>
                 <Menu fx:id="menuAction" mnemonicParsing="false" text="Action">
                   <items>
                     <MenuItem fx:id="mActionRun" mnemonicParsing="false" onAction="#doActionRun" text="Run" />
