@@ -132,6 +132,8 @@ public class JpGlobal {
 	public int osType = 0;
 	
 	public String projectOpen = null;
+	public String dirsSelected = null;
+	public String modulesSelected = null;
 	
 	public String jpackageVersion = null;
 	public String jpackagePath = null;
@@ -434,9 +436,7 @@ public class JpGlobal {
 			if (buttons != null)
 				yno.addButtons(buttons);
 			
-//			for (ButtonInfo bi : buttons) {
-//				yno.addButton(bi.getText(), bi.getReValue(), bi.isDefaultButton());
-//			}
+			stage.setOnCloseRequest((e) -> e.consume());		// disable Stage close button.
 
 			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
 				double stageWidth = newValue.doubleValue();

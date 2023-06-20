@@ -195,10 +195,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 					};
 					ButtonInfo bi = jg.centerDialog(aPane, "Save Changes", 
 							"You have unsaved changes.\n" +
-							"To NOT save changes select 'No' else\n" +
-							"select either 'Yes' or 'Cancel' and then used\n" +
-							"Menu File -> 'Save Project' or 'Save all Projects'.\n" +
-							"Save changes?", null, buttons);
+							"Select 'No' to abort all changes and exit.\n" +
+							"select 'Yes' or 'Cancel' to abort exit and then use\n" +
+							"Menu File -> 'Save Project' or 'Save all Projects'.\n", null, buttons);
 					if (bi.getReValue() == 1) {
 						return;
 					} else if (bi.getReValue() == 2) {
@@ -617,6 +616,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 		InputStream helpImg = getClass().getResourceAsStream("/images/help_icon.png");
 		Image imgHelp = new Image(helpImg, 18, 18, false, false);
 		
+		InputStream listImg = getClass().getResourceAsStream("/images/list.png");
+		Image imgList = new Image(listImg, 18, 18, false, false);
+		
 		Font font1 = Font.font("SansSerif", 16.0);
 		
 		try (InputStream in = getClass().getResourceAsStream("/resources/" + fn);
@@ -781,6 +783,112 @@ public class JpGuiController implements Initializable, RefreshScene {
 						if (popup.isShowing() == true)
 							popup.hide();
 					});
+				} else if (line.charAt(0) == '@') {	
+					tf = new TextField();
+					tf.setFont(font1);
+					final TitledPane titledPane = tp;
+					tf.textProperty().addListener((observable, oldValue, newValue) -> {
+						if (jg.loadFlag == true)
+							return;
+						if (newValue != null) {
+							Tab t = tabPane.getSelectionModel().getSelectedItem();
+							if (t != null) {
+								ObservableList<String> c = t.getStyleClass();
+								if (c.contains("dirty") == false)
+									t.getStyleClass().add("dirty");
+								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+							}
+							titledPane.setStyle("-fx-text-fill: " + hColor);
+						}
+					});
+					HBox.setHgrow(tf, Priority.ALWAYS);
+					
+					sb = new MyButton();
+					sb.setMyData("^");
+					sb.setGraphic(new ImageView(imgDir));
+					sb.setStyle("-fx-font-size: 14px;");
+					sb.setPrefWidth(30.0);
+					sb.setOnAction((e) -> {
+						Button b = (Button)e.getSource();
+						HBox hb2 = (HBox)b.getParent();
+						TextField textField = (TextField)hb2.getChildren().get(1);
+						FXMLLoader loader = jg.loadScene(aPane, "SelectDirectories.fxml", "Select Directories", null);
+						SelectDirectoriesController sdc = (SelectDirectoriesController)loader.getController();
+						sdc.setData(textField.getText());
+						
+						Stage stage = sdc.getStage();
+						
+				    	stage.showAndWait();
+				    	
+				    	if (jg.dirsSelected != null) {
+				    		textField.setText(jg.dirsSelected);
+				    	}
+					});
+					
+					Tooltip tt = new Tooltip("Select directories.");
+					tt.setStyle("-fx-font-size: 14px;");
+					sb.setTooltip(tt);
+					
+					hb.getChildren().addAll(lbl, tf);
+					vb2.getChildren().add(hb);
+					
+					tf.setOnMouseClicked((e)-> {
+						if (popup.isShowing() == true)
+							popup.hide();
+					});
+				} else if (line.charAt(0) == '%') {	
+					tf = new TextField();
+					tf.setFont(font1);
+					final TitledPane titledPane = tp;
+					tf.textProperty().addListener((observable, oldValue, newValue) -> {
+						if (jg.loadFlag == true)
+							return;
+						if (newValue != null) {
+							Tab t = tabPane.getSelectionModel().getSelectedItem();
+							if (t != null) {
+								ObservableList<String> c = t.getStyleClass();
+								if (c.contains("dirty") == false)
+									t.getStyleClass().add("dirty");
+								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+							}
+							titledPane.setStyle("-fx-text-fill: " + hColor);
+						}
+					});
+					HBox.setHgrow(tf, Priority.ALWAYS);
+					
+					sb = new MyButton();
+					sb.setMyData("^");
+					sb.setGraphic(new ImageView(imgDir));
+					sb.setStyle("-fx-font-size: 14px;");
+					sb.setPrefWidth(30.0);
+					sb.setOnAction((e) -> {
+						Button b = (Button)e.getSource();
+						HBox hb2 = (HBox)b.getParent();
+						TextField textField = (TextField)hb2.getChildren().get(1);
+						FXMLLoader loader = jg.loadScene(aPane, "FilesOrDirs.fxml", "Select Files & Directories", null);
+						FilesOrDirsController fdc = (FilesOrDirsController)loader.getController();
+						fdc.setData(textField.getText());
+						
+						Stage stage = fdc.getStage();
+						
+				    	stage.showAndWait();
+				    	
+				    	if (jg.dirsSelected != null) {
+				    		textField.setText(jg.dirsSelected);
+				    	}
+					});
+					
+					Tooltip tt = new Tooltip("Select directories.");
+					tt.setStyle("-fx-font-size: 14px;");
+					sb.setTooltip(tt);
+					
+					hb.getChildren().addAll(lbl, tf);
+					vb2.getChildren().add(hb);
+					
+					tf.setOnMouseClicked((e)-> {
+						if (popup.isShowing() == true)
+							popup.hide();
+					});
 				} else if (line.charAt(0) == '+') {
 					
 					tf = new TextField();
@@ -828,6 +936,32 @@ public class JpGuiController implements Initializable, RefreshScene {
 					tf.setOnMouseClicked((e)-> {
 						if (popup.isShowing() == true)
 							popup.hide();
+					});
+				}
+				
+				
+				
+				MyButton sm = null;
+				if (arr[0].substring(1).equalsIgnoreCase("add modules") == true) {
+					sm = new MyButton();
+					sm.setMyData("@");
+					sm.setGraphic(new ImageView(imgList));
+					sm.setStyle("-fx-font-size: 14px;");
+					sm.setPrefWidth(30.0);
+					sm.setOnAction((e) -> {
+						Button b = (Button)e.getSource();
+						HBox hb2 = (HBox)b.getParent();
+						TextField textField = (TextField)hb2.getChildren().get(1);
+						FXMLLoader loader = jg.loadScene(aPane, "AddModules.fxml", "Select Modules", null);
+						AddModulesController amc = (AddModulesController)loader.getController();
+						amc.setData(textField.getText());
+						Stage stage = (Stage)amc.getStage();
+				    	
+				    	stage.showAndWait();
+				    	
+				    	if (jg.modulesSelected != null) {
+				    		textField.setText(jg.modulesSelected);
+				    	}
 					});
 				}
 				
@@ -887,8 +1021,12 @@ public class JpGuiController implements Initializable, RefreshScene {
 				
 				if (sb != null)
 					hb.getChildren().addAll(rs, sb, qb);
-				else
-					hb.getChildren().addAll(rs, qb);
+				else {
+					if (sm != null)
+						hb.getChildren().addAll(rs, sm, qb);
+					else
+						hb.getChildren().addAll(rs, qb);
+				}
 				
 				String txt = arr[1];
 				String line2 = null;

@@ -76,7 +76,7 @@ public class YesNoOKController implements Initializable {
 		
 		for (ButtonInfo bi : dialogButtons) {
 			Button b = new Button(bi.getText());
-			b.setPrefWidth(100.0);
+			b.setPrefWidth(115.0);
 			b.setPrefHeight(30.0);
 			b.setStyle("-fx-font-size:18;");
 			b.setOnAction(new EventHandler<ActionEvent>() {

@@ -57,7 +57,7 @@
           specified) are used.
           This option can be used multiple times.
 ;
-  -Module Path:--module-path -p <module path>...
+  @Module Path:--module-path -p <module path>...
           A ; separated list of paths
           Each path is either a directory of modules or the path to a
           modular jar.
@@ -86,7 +86,7 @@
           All files in the input directory will be packaged into the
           application image.
 ;
-  *App Content:--app-content <additional content>[,<additional content>...]
+  %App Content:--app-content <additional content>[,<additional content>...]
           A comma separated list of paths to files and/or directories
           to add to the application payload.
           This option can be used more than once.

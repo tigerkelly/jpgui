@@ -34,7 +34,7 @@ public class ScriptEditController implements Initializable, RefreshScene {
     @FXML
     private TextArea taScript;
     
-    private JpGlobal jg = JpGlobal.getInstance();
+//    private JpGlobal jg = JpGlobal.getInstance();
     private File sf = null;
 
     @FXML
