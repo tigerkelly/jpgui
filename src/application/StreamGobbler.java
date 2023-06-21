@@ -13,15 +13,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javafx.application.Platform;
+import javafx.scene.control.TextArea;
+
 public class StreamGobbler extends Thread {
 	InputStream is = null;
 	StringBuilder sb =new StringBuilder();
-	boolean saveOutput = false;
+	Object obj = false;
 	boolean allTextMode = false;
     
-    StreamGobbler(InputStream is, boolean saveOutput) {
+    StreamGobbler(InputStream is, Object obj) {
         this.is = is;
-        this.saveOutput = saveOutput;
+        this.obj = obj;
     }
     
     public void run() {
@@ -32,10 +35,27 @@ public class StreamGobbler extends Thread {
 			String line = null;
 			
             while ( (line = br.readLine()) != null) {
-            	if (saveOutput) {
-            		sb.append(line);
+        		if (obj != null && obj instanceof TextArea) {
+        			final String txt = line;
+        			Platform.runLater(new Runnable() {
+        				@Override
+        				public void run() {
+//        					OutputInterface oi = (OutputInterface)obj;
+//                			oi.addText(txt + "\n", true);
+        					TextArea ta = (TextArea)obj;
+        					ta.appendText(txt + "\n");
+                			System.out.println(">> " + txt);
+        				}
+        			});
+        		} else {
+            		sb.append(" " + line + "\n");
 //            		System.out.println(line);
-            	}
+        		}
+        		try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
             }
             br.close();
         } catch (IOException ioe) {

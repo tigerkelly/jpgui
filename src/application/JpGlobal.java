@@ -110,7 +110,7 @@ public class JpGlobal {
 		sceneNav = new SceneNav();
 		
 		String cmd = jpackagePath + " --version";
-		ProcessRet pr = runProcess(cmd.split(" "));
+		ProcessRet pr = runProcess(cmd.split(" "), null);
 		jpackageVersion = pr.getOutput();
 	}
 	
@@ -465,7 +465,7 @@ public class JpGlobal {
 		return yno.getAction();
 	}
 	
-	public ProcessRet runProcess(String[] args) {
+	public ProcessRet runProcess(String[] args, Object obj) {
     	Process p = null;
     	ProcessBuilder pb = new ProcessBuilder();
 		pb.redirectErrorStream(true);
@@ -478,7 +478,7 @@ public class JpGlobal {
 		}
 
 //		@SuppressWarnings("resource")
-		StreamGobbler inGobbler = new StreamGobbler(p.getInputStream(), true);
+		StreamGobbler inGobbler = new StreamGobbler(p.getInputStream(), obj);
 		inGobbler.start();
 
 		int ev = 0;
