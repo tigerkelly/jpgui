@@ -47,7 +47,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.9";
+		appVersion = "1.1.10";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
