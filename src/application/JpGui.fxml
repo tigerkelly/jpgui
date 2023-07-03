@@ -66,6 +66,9 @@
                         <MenuItem fx:id="mFileSaveProject" mnemonicParsing="false" onAction="#doFileSaveProject" text="Save Project" />
                         <MenuItem fx:id="mFileSaveAllProjects" mnemonicParsing="false" onAction="#doFileSaveAllProjects" text="Save All Projects" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="mFileImportProject" mnemonicParsing="false" onAction="#doFileImportProject" text="Import Project" />
+                        <MenuItem fx:id="mFileExportProject" mnemonicParsing="false" onAction="#doFileExportProject" text="Export Project" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="mFileDeleteProject" mnemonicParsing="false" onAction="#doFileDeleteProject" text="Delete Project" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="mFileQuit" mnemonicParsing="false" onAction="#doFileQuit" text="Quit" />

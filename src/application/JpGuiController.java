@@ -2,6 +2,8 @@ package application;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,6 +93,12 @@ public class JpGuiController implements Initializable, RefreshScene {
     
     @FXML
     private MenuItem mFileDeleteProject;
+    
+    @FXML
+    private MenuItem mFileExportProject;
+
+    @FXML
+    private MenuItem mFileImportProject;
 
     @FXML
     private MenuItem mFileQuit;
@@ -148,12 +156,99 @@ public class JpGuiController implements Initializable, RefreshScene {
     Popup popup = null;
     DirectoryChooser dc = null;
     FileChooser fc = null;
+    FileChooser zfc = null;
     int lastBtn = -1;
     
     @FXML
     void doSetOptions(ActionEvent event) {
     	jg.setStatus("Setting Options");
     	jg.centerScene(aPane, "Options.fxml", "Setting Options", null);
+    }
+    
+    @FXML
+    void doFileExportProject(ActionEvent event) {
+    	jg.setStatus("Import Project");
+    	Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    	
+    	if (tab == null) {
+    		jg.addStatus("No tab selected.");
+    		return;
+    	}
+    	
+    	String prjName = tab.getText();
+    	String desc = jg.sysIni.getString("Projects", prjName);
+    	String prjDir = jg.workDir.getAbsolutePath() + File.separator + prjName;
+    	
+    	Stage stage = (Stage) aPane.getScene().getWindow();
+		File df = dc.showDialog(stage);
+		if (df == null) {
+			return;
+		}
+    	
+		try {
+			// Create file for project description.  Will be deleted on import.
+			FileWriter fw = new FileWriter(jg.workDir.getAbsolutePath() + 
+					File.separator + prjName + File.separator + "prj_desc.txt", false);
+			fw.write(tab.getText() + "=" + desc + "\n");
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String dirPath = df.getAbsolutePath() + File.separator + prjName + ".zip";
+		
+		try {
+			jg.zipFile(prjDir, dirPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		jg.addStatus("Done...");
+    }
+
+    @FXML
+    void doFileImportProject(ActionEvent event) {
+    	jg.setStatus("Import Project");
+    	Stage stage = (Stage) aPane.getScene().getWindow();
+    	zfc.getExtensionFilters().addAll(
+		     new FileChooser.ExtensionFilter("Zip Files", "*.zip"),
+		     new FileChooser.ExtensionFilter("All Files", "*.*")
+		);
+    	File df = zfc.showOpenDialog(stage);
+		if (df != null) {
+//			System.out.println(df.getAbsolutePath());
+			String t = df.getName();
+			int x = t.lastIndexOf('.');
+			String name = t.substring(0, x);
+			jg.unzip(df.getAbsolutePath(), jg.workDir.getAbsolutePath() + File.separator + name);
+			
+			File f = new File(jg.workDir.getAbsolutePath() + File.separator + name + File.separator + "prj_desc.txt");
+			if (f.exists() == false)
+				return;
+			
+			String[] arr = null;
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(f));
+				String st = br.readLine();
+				arr = st.split("=");
+				
+				br.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			if (arr == null)
+				return;
+			
+			jg.sysIni.addValuePair("Projects", arr[0], arr[1]);
+			jg.sysIni.writeFile(true);
+			
+			jg.addStatus("Done...");
+		} else {
+			jg.addStatus("Canceled");
+		}
     }
     
     @FXML
@@ -316,6 +411,8 @@ public class JpGuiController implements Initializable, RefreshScene {
     		tabPane.getTabs().remove(tab);
     		if (tabPane.getTabs().size() <= 0)
     			setMenu(true);
+    		
+    		jg.addStatus("Done...");
     	} else {
     		jg.addStatus("canceled");
     	}
@@ -484,6 +581,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 		});
 		
 		fc = new FileChooser();
+		zfc = new FileChooser();
 		dc = new DirectoryChooser();
 		
 		setMenu(true);
@@ -1611,6 +1709,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 			mActionScript.setDisable(true);
 		    mFileNewProject.setDisable(false);
 		    mFileOpenProject.setDisable(false);
+		    mFileImportProject.setDisable(false);
+		    mFileExportProject.setDisable(true);
 		    mFileQuit.setDisable(false);
 		    mFileSaveAllProjects.setDisable(true);
 		    mFileDeleteProject.setDisable(true);
@@ -1624,6 +1724,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 			mActionScript.setDisable(false);
 		    mFileNewProject.setDisable(false);
 		    mFileOpenProject.setDisable(false);
+		    mFileImportProject.setDisable(false);
+		    mFileExportProject.setDisable(false);
 		    mFileQuit.setDisable(false);
 		    mFileSaveAllProjects.setDisable(false);
 		    mFileDeleteProject.setDisable(false);

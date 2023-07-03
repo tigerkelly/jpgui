@@ -45,7 +45,7 @@ public class ReqPkgController implements Initializable, RefreshScene {
 			taText.appendText("  On Red Hat Linux: rpm-build package.\n");
 			taText.appendText("  On Ubuntu: fakeroot package.\n");
 			taText.appendText("  The Java JDK 8.0 or greater version of java.\n");
-			taText.appendText("  Also make sure that the Java version matches th JavafX version.\n");
+			taText.appendText("  Also make sure that the Java version matches the JavafX version.\n");
 			taText.appendText("  You will have to install/download JavaFX separately.\n\n");
 			
 			taText.appendText("MAC:\n");
@@ -84,7 +84,7 @@ public class ReqPkgController implements Initializable, RefreshScene {
 			taText.appendText("  The jpackage program can only create programs for the platform it is\n");
 			taText.appendText("  run on, so that means you have to have the platform to create an install\n");
 			taText.appendText("  for that platform.\n");
-			taText.appendText("  Each projects configration files and other files are kept in the users home\n");
+			taText.appendText("  Each projects configuration files and other files are kept in the users home\n");
 			taText.appendText("  directory called JpGui.\n");
 			taText.appendText("  For more information and helpful ideas to get the most out of JpGui see the\n");
 			taText.appendText("  JpGui_help.txt file in the JpGui directory.\n");

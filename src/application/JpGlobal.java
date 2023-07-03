@@ -6,9 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import com.rkw.IniFile;
 
@@ -38,7 +47,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.8";
+		appVersion = "1.1.9";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -314,6 +323,68 @@ public class JpGlobal {
 	    }
 	    file.delete();
 	}
+	
+	public void unzip(String zipFilePath, String destDir) {
+		File dir = new File(destDir);
+		// create output directory if it doesn't exist
+		if (!dir.exists())
+			dir.mkdirs();
+		FileInputStream fis;
+		// buffer for read and write data to file
+		byte[] buffer = new byte[1024];
+		try {
+			fis = new FileInputStream(zipFilePath);
+			ZipInputStream zis = new ZipInputStream(fis);
+			ZipEntry ze = zis.getNextEntry();
+			while (ze != null) {
+				String fileName = ze.getName();
+				File newFile = new File(destDir + File.separator + fileName);
+//				System.out.println("Unzipping to " + newFile.getAbsolutePath());
+				// create directories for sub directories in zip
+				new File(newFile.getParent()).mkdirs();
+				FileOutputStream fos = new FileOutputStream(newFile);
+				int len;
+				while ((len = zis.read(buffer)) > 0) {
+					fos.write(buffer, 0, len);
+				}
+				fos.close();
+				// close this ZipEntry
+				zis.closeEntry();
+				ze = zis.getNextEntry();
+			}
+			// close last ZipEntry
+			zis.closeEntry();
+			zis.close();
+			fis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void zipFile(String prjDir, String zipFileName) throws IOException {
+		final Path sourceDir = Paths.get(prjDir);
+        try {
+            final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(zipFileName));
+            Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                    try {
+                        Path targetFile = sourceDir.relativize(file);
+                        outputStream.putNextEntry(new ZipEntry(targetFile.toString()));
+                        byte[] bytes = Files.readAllBytes(file);
+                        outputStream.write(bytes, 0, bytes.length);
+                        outputStream.closeEntry();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	public boolean isDigit(String s) {
 		boolean tf = true;
