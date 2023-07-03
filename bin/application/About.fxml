@@ -31,6 +31,11 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
+                        <Label text="rkwiles@twc.com">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
                         <Label text="https://github.com/tigerkelly/JpGui.git">
                            <font>
                               <Font size="18.0" />
