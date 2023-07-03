@@ -1,6 +1,18 @@
 # JpGui
 A GUI program for the jpackage command line program in the Java JDK.
 
+This GUI program will help you to manage jpackage projects.
+
+Some of the features are:
+
+- Can have multiple projects open at once.
+- Can manage all three platforms with one GUI. The platforms are Windows, Liunx (like) and Apple Mac
+- Each option has a help button.
+- Multiple file and directory selection for options that support it.
+- Generates a batch or shell script that can run the jpackage command.
+- Can add pre and post run script to be run by the main script.
+- Each project is contained in it's own directory structure.
+
 This a major change from previous versions. I changed the directory structure and file names generated. :astonished: Sorry.<br>
 Please read the JpGui_help.txt for more helpful information.
 
