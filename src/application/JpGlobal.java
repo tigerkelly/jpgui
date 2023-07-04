@@ -47,7 +47,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.10";
+		appVersion = "1.1.12";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -361,13 +361,23 @@ public class JpGlobal {
 		}
 	}
 	
-	public void zipFile(String prjDir, String zipFileName) throws IOException {
+	public void zipFile(String prjName, String prjDir, String zipFileName) throws IOException {
 		final Path sourceDir = Paths.get(prjDir);
         try {
             final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(zipFileName));
             Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                	String pn = file.toString();
+                	// Omit the executable that was created.
+                	if(pn.contains(File.separator + "win_out" + File.separator + prjName) == true) {
+                		return FileVisitResult.CONTINUE;
+                	} else if(pn.contains(File.separator + "linux_out" + File.separator + prjName) == true) {
+                		return FileVisitResult.CONTINUE;
+                	} else if(pn.contains(File.separator + "mac_out" + File.separator + prjName) == true) {
+                		return FileVisitResult.CONTINUE;
+                	}
+                	
                     try {
                         Path targetFile = sourceDir.relativize(file);
                         outputStream.putNextEntry(new ZipEntry(targetFile.toString()));

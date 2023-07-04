@@ -167,7 +167,7 @@ public class JpGuiController implements Initializable, RefreshScene {
     
     @FXML
     void doFileExportProject(ActionEvent event) {
-    	jg.setStatus("Import Project");
+    	jg.setStatus("Export Project");
     	Tab tab = tabPane.getSelectionModel().getSelectedItem();
     	
     	if (tab == null) {
@@ -198,7 +198,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 		String dirPath = df.getAbsolutePath() + File.separator + prjName + ".zip";
 		
 		try {
-			jg.zipFile(prjDir, dirPath);
+			jg.zipFile(prjName, prjDir, dirPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
