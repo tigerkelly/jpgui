@@ -39,3 +39,8 @@ You can create scripts for both Windows and Linux on either the Windows platform
 The program can execute the script but only for the platform this GUI is running on.
 
 If you have any suggestions or questions, please ask.
+
+Also if you just want the install program created by the Jpackage.
+I only have 2 types of install at this time.
+Window 64bit intel/amd or Ubuntu 64bit intel/amd
+Send me an email if you want a link to one of these files.
