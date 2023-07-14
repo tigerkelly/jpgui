@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.rkw.IniFile;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,12 +64,12 @@ public class PrjNewController implements Initializable, RefreshScene {
     	if (f1.exists() == false) {
     		f1.mkdirs();
     	}
-    	File f2 = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
+    	File prjIniFile = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
     	
-    	if (f2.exists() == false) {	
+    	if (prjIniFile.exists() == false) {	
 			try {
-				FileWriter myWriter = new FileWriter(f2.getAbsolutePath(), false);
-				myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
+				FileWriter myWriter = new FileWriter(prjIniFile.getAbsolutePath(), false);
+				myWriter.write("# Jpackage project builder INI file.\n\n");
 				myWriter.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -145,6 +147,18 @@ public class PrjNewController implements Initializable, RefreshScene {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    	
+    	IniFile prjIni = new IniFile(prjIniFile.getAbsolutePath());
+    	
+    	prjIni.addSection("JpGui Options");
+    	prjIni.addSection("Generic Options");
+    	prjIni.addSection("Runtime Image Options");
+    	prjIni.addSection("Application Image Options");
+    	prjIni.addSection("Application Launcher(s) Options");
+    	prjIni.addSection("Platform Dependent Launcher Options");
+    	prjIni.addSection("Application Package Options");
+    	prjIni.addSection("Platform Dependent Package Options");
+    	prjIni.writeFile(true);
     	
     	jg.sysIni.writeFile(true);
     	

@@ -62,6 +62,7 @@
                 <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                   <items>
                     <MenuItem fx:id="mFileNewProject" mnemonicParsing="false" onAction="#doFileNewProject" text="New Project" />
+                        <MenuItem fx:id="mFileNewProjectWizard" mnemonicParsing="false" onAction="#doFileNewProjectWizard" text="New Project Wizard" />
                         <MenuItem fx:id="mFileOpenProject" mnemonicParsing="false" onAction="#doFileOpenProject" text="Open Project" />
                         <MenuItem fx:id="mFileSaveProject" mnemonicParsing="false" onAction="#doFileSaveProject" text="Save Project" />
                         <MenuItem fx:id="mFileSaveAllProjects" mnemonicParsing="false" onAction="#doFileSaveAllProjects" text="Save All Projects" />

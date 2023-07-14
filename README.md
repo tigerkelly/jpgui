@@ -8,6 +8,7 @@ Some of the features are:
 - Can have multiple projects open at once.
 - Can manage all three platforms with one GUI. The platforms are Windows, Liunx (like) and Apple Mac
 - Each option has a help button.
+- A 'New Project Wizard' to help you get started with a project.
 - Multiple file and directory selection for options that support it.
 - Generates a batch or shell script that can run the jpackage command.
 - Can add pre and post run script to be run by the main script.

@@ -38,13 +38,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -87,6 +85,9 @@ public class JpGuiController implements Initializable, RefreshScene {
 
     @FXML
     private MenuItem mFileNewProject;
+    
+    @FXML
+    private MenuItem mFileNewProjectWizard;
 
     @FXML
     private MenuItem mFileOpenProject;
@@ -344,6 +345,12 @@ public class JpGuiController implements Initializable, RefreshScene {
     void doFileNewProject(ActionEvent event) {
     	jg.setStatus("Creating project");
     	jg.centerScene(aPane, "PrjNew.fxml", "New Project", null);
+    }
+    
+    @FXML
+    void doFileNewProjectWizard(ActionEvent event) {
+    	jg.setStatus("Creating project with Wizard");
+    	jg.centerScene(aPane, "PrjNewWizard.fxml", "New Project Wizard", null);
     }
 
     @FXML
@@ -738,20 +745,6 @@ public class JpGuiController implements Initializable, RefreshScene {
 		HBox hb = null;
 		String hColor = "#ffff00;";
 		
-		InputStream undoImg = getClass().getResourceAsStream("/images/undo.png");
-		Image imgUndo = new Image(undoImg, 18, 18, false, false);
-		InputStream dirImg = getClass().getResourceAsStream("/images/folder.png");
-		Image imgDir = new Image(dirImg, 18, 18, false, false);
-		InputStream fileImg = getClass().getResourceAsStream("/images/file_icon.png");
-		Image imgFile = new Image(fileImg, 18, 18, false, false);
-		InputStream helpImg = getClass().getResourceAsStream("/images/help_icon.png");
-		Image imgHelp = new Image(helpImg, 18, 18, false, false);
-		
-		InputStream listImg = getClass().getResourceAsStream("/images/list.png");
-		Image imgList = new Image(listImg, 18, 18, false, false);
-		
-		Font font1 = Font.font("SansSerif", 16.0);
-		
 		try (InputStream in = getClass().getResourceAsStream("/resources/" + fn);
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 		    
@@ -808,7 +801,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				
 				Label lbl = new Label(arr[0].substring(1) + ":");
 				lbl.setUserData(arr[0].substring(1));
-				lbl.setFont(font1);
+				lbl.setFont(jg.font1);
 				lbl.setPrefWidth(150.0);
 				hb = new HBox();
 				hb.setSpacing(4.0);
@@ -819,7 +812,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					
 					ckb = new CheckBox(arr[0].substring(1));
 					ckb.setUserData(arr[0].substring(1));
-					ckb.setFont(font1);
+					ckb.setFont(jg.font1);
 					ckb.setPrefWidth(250);
 					final TitledPane titledPane = tp;
 					ckb.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -831,7 +824,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 							ObservableList<String> c = t.getStyleClass();
 							if (c.contains("dirty") == false)
 								t.getStyleClass().add("dirty");
-							jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue.toString());
+							jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue.toString());
 						}
 					    titledPane.setStyle("-fx-text-fill: " + hColor);
 					});
@@ -841,7 +834,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '*') {
 					
 					tf = new TextField();
-					tf.setFont(font1);
+					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -852,7 +845,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
-								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -869,7 +862,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '-') {
 					
 					tf = new TextField();
-					tf.setFont(font1);
+					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -880,7 +873,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
-								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -889,7 +882,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					
 					sb = new MyButton();
 					sb.setMyData("^");
-					sb.setGraphic(new ImageView(imgDir));
+					sb.setGraphic(new ImageView(jg.imgDir));
 					sb.setStyle("-fx-font-size: 14px;");
 					sb.setPrefWidth(30.0);
 					sb.setOnAction((e) -> {
@@ -916,7 +909,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 				} else if (line.charAt(0) == '@') {	
 					tf = new TextField();
-					tf.setFont(font1);
+					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -927,7 +920,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
-								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -936,7 +929,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					
 					sb = new MyButton();
 					sb.setMyData("^");
-					sb.setGraphic(new ImageView(imgDir));
+					sb.setGraphic(new ImageView(jg.imgDir));
 					sb.setStyle("-fx-font-size: 14px;");
 					sb.setPrefWidth(30.0);
 					sb.setOnAction((e) -> {
@@ -969,7 +962,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 				} else if (line.charAt(0) == '%') {	
 					tf = new TextField();
-					tf.setFont(font1);
+					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -980,7 +973,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
-								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -989,7 +982,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					
 					sb = new MyButton();
 					sb.setMyData("^");
-					sb.setGraphic(new ImageView(imgDir));
+					sb.setGraphic(new ImageView(jg.imgDir));
 					sb.setStyle("-fx-font-size: 14px;");
 					sb.setPrefWidth(30.0);
 					sb.setOnAction((e) -> {
@@ -1023,7 +1016,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				} else if (line.charAt(0) == '+') {
 					
 					tf = new TextField();
-					tf.setFont(font1);
+					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
@@ -1034,7 +1027,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 								ObservableList<String> c = t.getStyleClass();
 								if (c.contains("dirty") == false)
 									t.getStyleClass().add("dirty");
-								jg.currPrj.addValuePair(titledPane.getText(), (String)lbl.getUserData(), newValue);
+								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
 						}
@@ -1043,8 +1036,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 					
 					sb = new MyButton();
 					sb.setMyData("^");
-					sb.setGraphic(new ImageView(imgFile));
-					sb.setFont(font1);
+					sb.setGraphic(new ImageView(jg.imgFile));
+					sb.setFont(jg.font1);
 					sb.setPrefWidth(30.0);
 					sb.setOnAction((e) -> {
 						Button b = (Button)e.getSource();
@@ -1058,7 +1051,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 					});
 					
 					Tooltip tt = new Tooltip("Select a file.");
-					tt.setFont(font1);
+					tt.setFont(jg.font1);
 					sb.setTooltip(tt);
 					
 					hb.getChildren().addAll(lbl, tf);
@@ -1076,7 +1069,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				if (arr[0].substring(1).equalsIgnoreCase("add modules") == true) {
 					sm = new MyButton();
 					sm.setMyData("@");
-					sm.setGraphic(new ImageView(imgList));
+					sm.setGraphic(new ImageView(jg.imgList));
 					sm.setStyle("-fx-font-size: 14px;");
 					sm.setPrefWidth(30.0);
 					sm.setOnAction((e) -> {
@@ -1101,10 +1094,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 				MyButton rs = new MyButton();
 				rs.setMyData("r");
 				rs.setPrefSize(18.0, 18.0);
-				rs.setGraphic(new ImageView(imgUndo));
-				rs.setFont(font1);
+				rs.setGraphic(new ImageView(jg.imgUndo));
+				rs.setFont(jg.font1);
 				Tooltip tt2 = new Tooltip("Reset field.");
-				tt2.setFont(font1);
+				tt2.setFont(jg.font1);
 				rs.setTooltip(tt2);
 				
 				final TitledPane tp2 = tp;
@@ -1129,8 +1122,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 				
 				MyButton qb = new MyButton();
 				qb.setMyData("?");
-				qb.setGraphic(new ImageView(imgHelp));
-				qb.setFont(font1);
+				qb.setGraphic(new ImageView(jg.imgHelp));
+				qb.setFont(jg.font1);
 				qb.setOnAction((e) -> {
 					TextArea ta = (TextArea)popup.getContent().get(0);
 					ta.setPrefWidth(500.0);

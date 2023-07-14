@@ -11,7 +11,9 @@
 ^Generic Options
   *Package Type:--type -t <type>
           The type of package to create
-          Valid values are: {"app-image", "exe", "msi"}
+          Valid Windows values are: {"app-image", "exe", "msi"}
+          Valid Linux values are: {"app-image", "rpm", "deb"}
+          Valid Mac values are: {"app-image", "dmg", "pkg"}
           If this option is not specified a platform dependent
           default type will be created.
 ;

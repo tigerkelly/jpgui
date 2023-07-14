@@ -1,0 +1,53 @@
+
+  *Package Type:--type -t <type>
+          The type of package to create
+          Valid Windows values are: {"app-image", "exe", "msi"}
+          Valid Linux values are: {"app-image", "rpm", "deb"}
+          Valid Mac values are: {"app-image", "dmg", "pkg"}
+          If this option is not specified a platform dependent
+          default type will be created.
+;
+  *App Version:--app-version <version>
+          Version of the application and/or package
+;
+  *Copyright:--copyright <copyright string>
+          Copyright for the application
+;
+  *Description:--description <description string>
+          Description of the application
+;
+  *App Name:--name -n <name>
+          Name of the application and/or package
+;
+  *Vendor:--vendor <vendor string>
+          Vendor of the application
+;
+  *Add Modules:--add-modules <module name>[,<module name>...]
+          A comma (",") separated list of modules to add
+          This module list, along with the main module (if specified)
+          will be passed to jlink as the --add-module argument.
+          If not specified, either just the main module (if --module is
+          specified), or the default set of modules (if --main-jar is
+          specified) are used.
+          This option can be used multiple times.
+;
+  @Module Path:--module-path -p <module path>...
+          A ; separated list of paths
+          Each path is either a directory of modules or the path to a
+          modular jar.
+          (Each path is absolute or relative to the current directory.)
+          This option can be used multiple times.
+;
+  *Main Class:--main-class <class name>
+          Qualified name of the application main class to execute
+          This option can only be used if --main-jar is specified.
+;
+  *Main Jar:--main-jar <main jar file>
+          The main JAR of the application; containing the main class
+          (specified as a path relative to the input path)
+          Either --module or --main-jar option can be specified but not
+          both.
+;
+  &Shortcut:--win-shortcut
+          Request to add desktop shortcut for this application
+;

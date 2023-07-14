@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -47,7 +49,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.13";
+		appVersion = "1.1.14";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -121,11 +123,33 @@ public class JpGlobal {
 		String cmd = jpackagePath + " --version";
 		ProcessRet pr = runProcess(cmd.split(" "), null);
 		jpackageVersion = pr.getOutput();
+		
+		InputStream undoImg = getClass().getResourceAsStream("/images/undo.png");
+		imgUndo = new Image(undoImg, 18, 18, false, false);
+		InputStream dirImg = getClass().getResourceAsStream("/images/folder.png");
+		imgDir = new Image(dirImg, 18, 18, false, false);
+		InputStream fileImg = getClass().getResourceAsStream("/images/file_icon.png");
+		imgFile = new Image(fileImg, 18, 18, false, false);
+		InputStream helpImg = getClass().getResourceAsStream("/images/help_icon.png");
+		imgHelp = new Image(helpImg, 18, 18, false, false);
+		
+		InputStream listImg = getClass().getResourceAsStream("/images/list.png");
+		imgList = new Image(listImg, 18, 18, false, false);
+		
+		font1 = Font.font("SansSerif", 16.0);
 	}
 	
 	public String appVersion = null;
 	public Map<String, IniFile> prjList = null;
 	public Map<String, IniFile> orgList = null;
+	
+	public Image imgUndo = null;
+	public Image imgDir = null;
+	public Image imgFile = null;
+	public Image imgHelp = null;
+	public Image imgList = null;
+	
+	public Font font1 = null;
 	
 	public boolean loadFlag = false;
 	public boolean leaveProgram = false;
@@ -146,6 +170,7 @@ public class JpGlobal {
 	
 	public String jpackageVersion = null;
 	public String jpackagePath = null;
+	public String modulePath = null;
 	public String platform = null;
 	
 	public Label status = null;
