@@ -2,16 +2,17 @@
 Getting the most out of JpGui.
 
 The JpGui program can keep track of options for all three types of platforms in a single
-set of configuration files but the jpackage program can only create install programs for a 
-platform while being run on that platform.
+set of configuration files but the jpackage program can only create install programs for the
+platform you run the jpackage command on.
 
 Their are many configurations possible with jpackage so I am not able to help much with your project but
 send me an email and if I can help I will.
 
 Here is one idea on how to manage this issue.
 
-A file called JpGui.zip contains the JpGui's configuration files I used to create the JpGui install program,
-so use this on how to configure a new project.  Unzip this file into a temporary directory so that you can look it over.
+A file called JpGui.zip contains the JpGui's configuration files I used to create the JpGui install program.
+
+You can use the Import and Export options in the JpGui program to help manage projects between platforms.
 
 Store the JpGui configuration directory in a GIT repository that is accessible by all three platforms.
 
