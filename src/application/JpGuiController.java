@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -317,22 +318,15 @@ public class JpGuiController implements Initializable, RefreshScene {
 			String s = (String) o;
 			IniFile ini = jg.prjList.get(s);
 			if (ini.getChangedFlag() == true) {
-				ButtonInfo[] buttons = {
-						new ButtonInfo("Yes", 1, false),
-						new ButtonInfo("No", 2, false),
-						new ButtonInfo("Cancel", 3, true),
-					};
-					ButtonInfo bi = jg.centerDialog(aPane, "Save Changes", 
-							"You have unsaved changes.\n" +
-							"Select 'No' to abort all changes and exit.\n" +
-							"select 'Yes' or 'Cancel' to abort exit and then use\n" +
-							"Menu File -> 'Save Project' or 'Save all Projects'.\n", null, buttons);
-					if (bi.getReValue() == 1) {
-						return;
-					} else if (bi.getReValue() == 2) {
-					} else {
-						return;
-					}
+				ButtonType bt = jg.yesNoCancelAlert(aPane, "Quit JpGui", 
+						"You have unsaved changes.\n" +
+						"Select 'No' to abort all changes and exit.\n" +
+						"select 'Yes' to close dialog, then use\n" +
+						"Menu File -> 'Save Project' or 'Save all Projects'.\n", null);
+				System.out.println(bt);
+				if (bt.getButtonData() == ButtonData.YES) {
+					return;
+				}
 			}
 		}
 		

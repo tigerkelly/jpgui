@@ -38,7 +38,6 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class JpGlobal {
 
@@ -49,7 +48,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.14";
+		appVersion = "1.1.15";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -514,62 +513,77 @@ public class JpGlobal {
 		return loader;
 	}
 	
-	public ButtonInfo centerDialog(Node node, String title, String msg, Image icon, ButtonInfo[] buttons) {
-		FXMLLoader loader = null;
-		YesNoOKController yno = null;
-		try {
-			Stage stage = new Stage();
-			stage.setTitle(title);
-
-			loader = new FXMLLoader(getClass().getResource("YesNoOK.fxml"));
-
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initStyle(StageStyle.UTILITY);
-			stage.setAlwaysOnTop(true);
-
-			stage.setScene(new Scene(loader.load()));
-			stage.hide();
-
-			Stage ps = (Stage) node.getScene().getWindow();
-			
-			yno = (YesNoOKController)loader.getController();
-			if (title != null)
-				yno.setTitle(title);
-			if (msg != null)
-				yno.setMessage(msg);
-			if (icon != null)
-				yno.setImage(icon);
-			if (buttons != null)
-				yno.addButtons(buttons);
-			
-			stage.setOnCloseRequest((e) -> e.consume());		// disable Stage close button.
-
-			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
-				double stageWidth = newValue.doubleValue();
-				stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
-			};
-			ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
-				double stageHeight = newValue.doubleValue();
-				stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
-			};
-
-			stage.widthProperty().addListener(widthListener);
-			stage.heightProperty().addListener(heightListener);
-
-			// Once the window is visible, remove the listeners
-			stage.setOnShown(e2 -> {
-				stage.widthProperty().removeListener(widthListener);
-				stage.heightProperty().removeListener(heightListener);
-			});
-
-			stage.showAndWait();
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+	public ButtonType yesNoCancelAlert(Node node, String title, String msg, Image icon) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(title);
+	    alert.setContentText(msg);
+	    alert.getButtonTypes().setAll(ButtonType.YES, 
+	                                  ButtonType.NO);
+	    
+	    DialogPane dialogPane = alert.getDialogPane();
+	    dialogPane.setPrefWidth(600.0);
+		dialogPane.getStylesheets().add(getClass().getResource("myDialogs.css").toExternalForm());
+		dialogPane.getStyleClass().add("myDialog");
 		
-		return yno.getAction();
+	    return alert.showAndWait().get();
 	}
+	
+//	public ButtonInfo centerDialog(Node node, String title, String msg, Image icon, ButtonInfo[] buttons) {
+//		FXMLLoader loader = null;
+//		YesNoOKController yno = null;
+//		try {
+//			Stage stage = new Stage();
+//			stage.setTitle(title);
+//
+//			loader = new FXMLLoader(getClass().getResource("YesNoOK.fxml"));
+//
+//			stage.initModality(Modality.APPLICATION_MODAL);
+//			stage.initStyle(StageStyle.UTILITY);
+//			stage.setAlwaysOnTop(true);
+//
+//			stage.setScene(new Scene(loader.load()));
+//			stage.hide();
+//
+//			Stage ps = (Stage) node.getScene().getWindow();
+//			
+//			yno = (YesNoOKController)loader.getController();
+//			if (title != null)
+//				yno.setTitle(title);
+//			if (msg != null)
+//				yno.setMessage(msg);
+//			if (icon != null)
+//				yno.setImage(icon);
+//			if (buttons != null)
+//				yno.addButtons(buttons);
+//			
+//			stage.setOnCloseRequest((e) -> e.consume());		// disable Stage close button.
+//
+//			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
+//				double stageWidth = newValue.doubleValue();
+//				stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
+//			};
+//			ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
+//				double stageHeight = newValue.doubleValue();
+//				stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
+//			};
+//
+//			stage.widthProperty().addListener(widthListener);
+//			stage.heightProperty().addListener(heightListener);
+//
+//			// Once the window is visible, remove the listeners
+//			stage.setOnShown(e2 -> {
+//				stage.widthProperty().removeListener(widthListener);
+//				stage.heightProperty().removeListener(heightListener);
+//			});
+//
+//			stage.showAndWait();
+//
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//		return yno.getAction();
+//	}
 	
 	public ProcessRet runProcess(String[] args, Object obj) {
     	Process p = null;
