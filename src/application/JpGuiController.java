@@ -1354,6 +1354,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 			String appExt = null;
 			boolean verboseFlag = false;
 			boolean jpackageVerFlag = false;
+			boolean consoleFlag = false;
 			
 			String cmdLine = "";
 			
@@ -1428,6 +1429,8 @@ public class JpGuiController implements Initializable, RefreshScene {
 							verboseFlag = value;
 						} else if (lbl.getText().toLowerCase().equals("jpackage version:") == true) {
 							jpackageVerFlag = value;
+						} else if (lbl.getText().toLowerCase().equals("win console:") == true) {
+							consoleFlag = value;
 						}
 						if (value == true) {
 							if (paneName.equals("jpgui options") == true) {
@@ -1527,6 +1530,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 			fw.write("echo Creating Application Version: " + appVersion + "\n\n");
 			
 			fw.write("echo Running jpackage command line.  This can take a few...\n");
+			
+			if (consoleFlag == true)
+				fw.write("echo \u001B[93mWARNING:\u001B[0m The windows console flag is set.\n");
+			
 			fw.write(cmdLine + "\n\n");
 			
 			if (isWin == true) {
