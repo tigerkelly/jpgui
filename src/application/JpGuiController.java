@@ -1486,7 +1486,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				fw.write("    echo Deleting old " + appName + "-" + appVersion + appExt + "\n");
 				fw.write("    del /F /Q \"" + dest + File.separator + appName + "-" + appVersion + appExt + "\"\n");
 				fw.write("    if exist \"" + dest + File.separator + appName + "-" + appVersion + appExt + "\" (\n");
-				fw.write("        echo FAILED: Delete of " + appName + "-" + appVersion + appExt + "\n");
+				fw.write("        echo \\u001B[91mFAILED:\\u001B[0m Delete of " + appName + "-" + appVersion + appExt + "\n");
 				fw.write("        exit /b 1\n");
 				fw.write("    )\n");
 				fw.write(")\n\n");
@@ -1496,7 +1496,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 				fw.write("echo Deleting old " + appName + "-" + appVersion + appExt + "\n");
 				fw.write("rm -rf " + dest + File.separator + appName + "-" + appVersion + appExt + "\n\n");
 				fw.write("if [ -f \"" + dest + File.separator + appName + "-" + appVersion + appExt + "\" ]; then\n");
-				fw.write("   echo FAILED: To delete \""  + dest + File.separator + appName + "-" + appVersion + appExt + "\"\n");
+				fw.write("   echo \u001B[91mFAILED:\u001B[0m To delete \""  + dest + File.separator + appName + "-" + appVersion + appExt + "\"\n");
 				fw.write("   exit 1\n");
 				fw.write("fi\n\n");
 			}
@@ -1512,14 +1512,14 @@ public class JpGuiController implements Initializable, RefreshScene {
 					fw.write("    echo FAILED: PostRun Script.\n");
 					fw.write("    exit /b 1\n");
 					fw.write(")\n\n");
-					fw.write("echo DONE: Executing PreRun Script.\n\n");
+					fw.write("echo \u001B[92mDONE:\u001B[0m Executing PreRun Script.\n\n");
 				} else {
 					fw.write(preRun + "\n\n");
 					fw.write("if [ $? -ne 0 ]; then\n");
 					fw.write("    echo FAILED: PreRun Script.\n");
 					fw.write("    exit 1\n");
 					fw.write("fi\n\n");
-					fw.write("echo DONE: Executing PreRun Script.\n\n");
+					fw.write("echo \u001B[92mDONE:\u001B[0m Executing PreRun Script.\n\n");
 				}
 			}
 			
@@ -1541,13 +1541,13 @@ public class JpGuiController implements Initializable, RefreshScene {
 				fw.write("    echo FAILED: Jpackage execution. ***\n");
 				fw.write("    exit /b 1\n");
 				fw.write(")\n\n");
-				fw.write("echo DONE: Executing jpackage command line.\n\n");
+				fw.write("echo \u001B[92mDONE:\u001B[0m Executing jpackage command line.\n\n");
 			} else {
 				fw.write("if [ $? -ne 0 ]; then\n");
 				fw.write("    echo FAILED: Jpackage execution. ***\n");
 				fw.write("    exit 1\n");
 				fw.write("fi\n\n");
-				fw.write("echo DONE: Executing " + prjName + ".sh\n\n");
+				fw.write("echo \u001B[92mDONE:\u001B[0m Executing " + prjName + ".sh\n\n");
 			}
 			
 			if (postRun != null && postRun.isBlank() == false) {
@@ -1558,19 +1558,19 @@ public class JpGuiController implements Initializable, RefreshScene {
 					fw.write("    echo FAILED: PostRun Script.\n");
 					fw.write("    exit /b 1\n");
 					fw.write(")\n\n");
-					fw.write("echo DONE: Executing PostRun Script.\n\n");
+					fw.write("echo \u001B[92mDONE:\u001B[0m Executing PostRun Script.\n\n");
 				} else {
 					fw.write(postRun + "\n\n");
 					fw.write("if [ $? -ne 0 ]; then\n");
 					fw.write("    echo FAILED: PostRun Script.\n");
 					fw.write("    exit 1\n");
 					fw.write("fi\n");
-					fw.write("echo DONE: Executing PostRun Script.\n\n");
+					fw.write("echo \u001B[92mDONE:\u001B[0m Executing PostRun Script.\n\n");
 					fw.write("exit 0\n");
 				}
 			}
 			
-			fw.write("echo FINISHED: " + f.getName() + "\n");
+			fw.write("echo \u001B[97mFINISHED:\u001B[0mFINISHED: " + f.getName() + "\n");
 			
 			File prerun = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
 					"projects" + File.separator + prjName + File.separator + os + "_prerun.bat");
