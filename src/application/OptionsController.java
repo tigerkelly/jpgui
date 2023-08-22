@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
@@ -33,6 +34,9 @@ public class OptionsController implements Initializable, RefreshScene {
     
     @FXML
     private TextField tfPath;
+    
+    @FXML
+    private TextArea taUserMods;
     
     private JpGlobal jg = JpGlobal.getInstance();
 
@@ -62,12 +66,37 @@ public class OptionsController implements Initializable, RefreshScene {
     		jg.sysIni.addValuePair("System", "jpackage", path);
     	}
     	
-    	String mp = tfJpackage.getText();
+    	String mp = tfPath.getText();
     	if (mp != null) {
     		jg.sysIni.addValuePair("System", "modulepath", mp);
     		jg.modulePath = mp;
     	} else {
     		jg.modulePath = null;
+    	}
+    	
+    	int idx = 0;
+    	Object[] objs = jg.sysIni.getSectionKeys("UserMods");
+    	if (objs != null) {
+    		for (Object o : objs) {
+    			int n = Integer.parseInt((String)o);
+    			if (n > idx)
+    				idx = n;
+    		}
+    	}
+    	
+    	idx++;
+    	
+    	jg.sysIni.removeSection("UserMods");
+    	jg.sysIni.addSection("UserMods");
+    	
+    	String txt = taUserMods.getText();
+    	if (txt.isBlank() == false) {
+    		String[] arr = txt.split("\n");
+    		
+    		for (String s : arr) {
+    			jg.sysIni.addValuePair("UserMods", idx + "", s);
+    			idx++;
+    		}
     	}
     	
     	jg.jpackagePath = path;
@@ -89,7 +118,10 @@ public class OptionsController implements Initializable, RefreshScene {
 			dc.setInitialDirectory(new File(mp));
 		if (df != null) {
 			String txt = tfPath.getText();
-			txt += ";" + df.getAbsolutePath();
+			if (txt.isBlank() == true)
+				txt = df.getAbsolutePath();
+			else
+				txt += ";" + df.getAbsolutePath();
 			tfPath.setText(txt);
 		}
     }
@@ -105,6 +137,15 @@ public class OptionsController implements Initializable, RefreshScene {
 		String mp = jg.sysIni.getString("System", "modulepath");
 		if (mp != null)
 			tfPath.setText(mp);
+		
+		taUserMods.setText("");
+		Object[] objs = jg.sysIni.getSectionKeys("UserMods");
+		if (objs != null) {
+			for (Object o : objs) {
+				String v = jg.sysIni.getString("UserMods", o);
+				taUserMods.appendText(v + "\n");
+			}
+		}
 	}
 
 	@Override

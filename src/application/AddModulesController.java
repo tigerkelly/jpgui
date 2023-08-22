@@ -32,8 +32,12 @@ public class AddModulesController implements Initializable, RefreshScene {
     @FXML
     private ListView<CheckBox> lvModules;
     
+    @FXML
+    private ListView<CheckBox> lvUserMods;
+    
     private JpGlobal jg = JpGlobal.getInstance();
     private ObservableList<CheckBox> mods = null;
+    private ObservableList<CheckBox> userMods = null;
 
     @FXML
     void doBtnCancel(ActionEvent event) {
@@ -53,6 +57,14 @@ public class AddModulesController implements Initializable, RefreshScene {
     				jg.modulesSelected += "," + ckb.getText();
     		}
     	}
+    	for (CheckBox ckb : userMods) {
+    		if (ckb.isSelected() == true) {
+    			if (jg.modulesSelected == null)
+    				jg.modulesSelected = ckb.getText();
+    			else
+    				jg.modulesSelected += "," + ckb.getText();
+    		}
+    	}
 //    	System.out.println(jg.modulesSelected);
     	Stage stage = (Stage)aPane.getScene().getWindow();
     	stage.close();
@@ -61,6 +73,7 @@ public class AddModulesController implements Initializable, RefreshScene {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		mods = FXCollections.observableArrayList();
+		userMods = FXCollections.observableArrayList();
 		try (InputStream in = getClass().getResourceAsStream("/resources/modules.txt");
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 		    
@@ -84,7 +97,19 @@ public class AddModulesController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
 		
+		Object[] objs = jg.sysIni.getSectionKeys("UserMods");
+		if (objs != null) {
+			for (Object o : objs) {
+				String v = jg.sysIni.getString("UserMods", o);
+				CheckBox ckb = new CheckBox(v);
+				userMods.add(ckb);
+			}
+		}
+		
 		lvModules.setItems(mods);
+		
+		
+		lvUserMods.setItems(userMods);
 	}
 	
 	public Stage getStage() {
@@ -98,6 +123,13 @@ public class AddModulesController implements Initializable, RefreshScene {
 		String[] mm = modules.split(",");
 		
 		for (CheckBox ckb : mods) {
+			for (String s : mm) {
+				if (ckb.getText().equalsIgnoreCase(s) == true)
+					ckb.setSelected(true);
+			}
+		}
+		
+		for (CheckBox ckb : userMods) {
 			for (String s : mm) {
 				if (ckb.getText().equalsIgnoreCase(s) == true)
 					ckb.setSelected(true);

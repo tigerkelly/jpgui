@@ -1,10 +1,14 @@
 ^JpGui Options
-  &Verbose Output:--jp-verbose
+  &Jpackage Verbose:--jp-verbose
           If checked then --verbose is added to the jpackage command line.
 ;
   &Jpackage Version:--jp-version
           If checked then the jpackage version will be displayed when 
           script is run.
+;
+  &Java Verbose:-verbose
+          Causes Java to out a lot of data.  Must use --console-win
+          option to be able to see output under Windows.
 ;
 ## This combines all three jpackage options into one file.
 ##
@@ -39,10 +43,11 @@
           Defaults to the current working directory.
 ;
   -Temporary:--temp <directory path>
-          Path of a new or empty directory used to create temporary files
-          (absolute path or relative to the current directory)
-          If specified, the temp dir will not be removed upon the task
-          completion and must be removed manually.
+          Path of a new or empty directory used to create
+          temporary files (absolute path or relative to
+          the current directory)
+          If specified, the temp dir will not be removed upon the
+          task completion and must be removed manually.
           If not specified, a temporary directory will be created and
           removed upon the task completion.
 ;
@@ -52,11 +57,12 @@
 ^Runtime Image Options
   *Add Modules:--add-modules <module name>[,<module name>...]
           A comma (",") separated list of modules to add
-          This module list, along with the main module (if specified)
-          will be passed to jlink as the --add-module argument.
-          If not specified, either just the main module (if --module is
-          specified), or the default set of modules (if --main-jar is
-          specified) are used.
+          This module list, along with the main module
+          (if specified) will be passed to jlink as the
+          --add-module argument.
+          If not specified, either just the main module (if
+          --module is specified), or the default set of 
+          modules (if --main-jar is specified) are used.
           This option can be used multiple times.
 ;
   @Module Path:--module-path -p <module path>...
@@ -73,11 +79,11 @@
           This option can be used multiple times.
 ;
   -Runtime Image:--runtime-image <directory path>
-          Path of the predefined runtime image that will be copied into
-          the application image
+          Path of the predefined runtime image that will be copied
+          into the application image
           (absolute path or relative to the current directory)
-          If --runtime-image is not specified, jpackage will run jlink to
-          create the runtime image using options:
+          If --runtime-image is not specified, jpackage will run
+          jlink to create the runtime image using options:
           --strip-debug, --no-header-files, --no-man-pages, and
           --strip-native-commands.
 ;
@@ -115,9 +121,10 @@
           line arguments are given to the launcher
           This option can be used multiple times.
 ;
-  *Java Options:--java-options <java options>
+  !Java Options:--java-options <java options>
           Options to pass to the Java runtime
           This option can be used multiple times.
+          One option per line.
 ;
   *Main Class:--main-class <class name>
           Qualified name of the application main class to execute

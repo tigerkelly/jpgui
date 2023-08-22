@@ -48,7 +48,11 @@
                         </Label>
                         <ComboBox fx:id="cbPlatform" onAction="#doPlatform" prefWidth="115.0" style="-fx-font-size: 16px; -fx-font-weight: bold;">
                            <tooltip>
-                              <Tooltip text="Select the Platform to edit." />
+                              <Tooltip text="Select the Platform to edit.">
+                              	<font>
+                              		<Font size="16.0" />
+                           		</font>
+                              </Tooltip>
                            </tooltip></ComboBox>
                      </children>
                   </VBox>
@@ -57,51 +61,72 @@
                   <Insets bottom="4.0" left="6.0" right="6.0" top="4.0" />
                </padding>
             </HBox>
-            <MenuBar style="-fx-font-size: 15px;">
-              <menus>
-                <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem fx:id="mFileNewProject" mnemonicParsing="false" onAction="#doFileNewProject" text="New Project" />
-                        <MenuItem fx:id="mFileNewProjectWizard" mnemonicParsing="false" onAction="#doFileNewProjectWizard" text="New Project Wizard" />
-                        <MenuItem fx:id="mFileOpenProject" mnemonicParsing="false" onAction="#doFileOpenProject" text="Open Project" />
-                        <MenuItem fx:id="mFileSaveProject" mnemonicParsing="false" onAction="#doFileSaveProject" text="Save Project" />
-                        <MenuItem fx:id="mFileSaveAllProjects" mnemonicParsing="false" onAction="#doFileSaveAllProjects" text="Save All Projects" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="mFileImportProject" mnemonicParsing="false" onAction="#doFileImportProject" text="Import Project" />
-                        <MenuItem fx:id="mFileExportProject" mnemonicParsing="false" onAction="#doFileExportProject" text="Export Project" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="mFileDeleteProject" mnemonicParsing="false" onAction="#doFileDeleteProject" text="Delete Project" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="mFileQuit" mnemonicParsing="false" onAction="#doFileQuit" text="Quit" />
-                  </items>
-                </Menu>
-                  <Menu fx:id="menuScripts" mnemonicParsing="false" text="Scripts">
-                    <items>
-                      <MenuItem fx:id="mScriptsEditPreRun" mnemonicParsing="false" onAction="#doScriptsEditPreRun" text="Edit PreRun" />
-                        <MenuItem fx:id="mScriptsEditPstRun" mnemonicParsing="false" onAction="#doScritpsEditPostRun" text="Edit PostRun" />
-                        <MenuItem fx:id="mScriptsEditMain" mnemonicParsing="false" onAction="#doScritpsEditMain" text="Edit Main" />
-                    </items>
-                  </Menu>
-                <Menu fx:id="menuAction" mnemonicParsing="false" text="Action">
-                  <items>
-                    <MenuItem fx:id="mActionRun" mnemonicParsing="false" onAction="#doActionRun" text="Run" />
-                        <MenuItem fx:id="mActionScript" mnemonicParsing="false" onAction="#doActionScript" text="Script" />
-                  </items>
-                </Menu>
-                  <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
-                    <items>
-                      <MenuItem fx:id="mSetOptions" mnemonicParsing="false" onAction="#doSetOptions" text="Set Options" />
-                    </items>
-                  </Menu>
-                <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem fx:id="mHelpRequired" mnemonicParsing="false" onAction="#doHelpRequired" text="HelpFul" />
-                        <MenuItem fx:id="mHelpHelp" mnemonicParsing="false" onAction="#doHelpHelp" text="Help" />
-                        <MenuItem fx:id="mHelpAbout" mnemonicParsing="false" onAction="#doHelpAbout" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
+            <HBox alignment="BOTTOM_LEFT" spacing="4.0">
+               <children>
+                  <MenuBar style="-fx-font-size: 15px;" HBox.hgrow="ALWAYS">
+                    <menus>
+                      <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                        <items>
+                          <MenuItem fx:id="mFileNewProject" mnemonicParsing="false" onAction="#doFileNewProject" text="New Project" />
+                              <MenuItem fx:id="mFileNewProjectWizard" mnemonicParsing="false" onAction="#doFileNewProjectWizard" text="New Project Wizard" />
+                              <MenuItem fx:id="mFileOpenProject" mnemonicParsing="false" onAction="#doFileOpenProject" text="Open Project" />
+                              <MenuItem fx:id="mFileSaveProject" mnemonicParsing="false" onAction="#doFileSaveProject" text="Save Project" />
+                              <MenuItem fx:id="mFileSaveAllProjects" mnemonicParsing="false" onAction="#doFileSaveAllProjects" text="Save All Projects" />
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                              <MenuItem fx:id="mFileImportProject" mnemonicParsing="false" onAction="#doFileImportProject" text="Import Project" />
+                              <MenuItem fx:id="mFileExportProject" mnemonicParsing="false" onAction="#doFileExportProject" text="Export Project" />
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                              <MenuItem fx:id="mFileDeleteProject" mnemonicParsing="false" onAction="#doFileDeleteProject" text="Delete Project" />
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                              <MenuItem fx:id="mFileSwitch" mnemonicParsing="false" onAction="#doFileSwitch" text="Switch Workspace" />
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                              <MenuItem fx:id="mFileQuit" mnemonicParsing="false" onAction="#doFileQuit" text="Quit" />
+                        </items>
+                      </Menu>
+                        <Menu fx:id="menuScripts" mnemonicParsing="false" text="Scripts">
+                          <items>
+                            <MenuItem fx:id="mScriptsEditPreRun" mnemonicParsing="false" onAction="#doScriptsEditPreRun" text="Edit PreRun" />
+                              <MenuItem fx:id="mScriptsEditPstRun" mnemonicParsing="false" onAction="#doScritpsEditPostRun" text="Edit PostRun" />
+                              <MenuItem fx:id="mScriptsEditMain" mnemonicParsing="false" onAction="#doScritpsEditMain" text="Edit Main" />
+                          </items>
+                        </Menu>
+                      <Menu fx:id="menuAction" mnemonicParsing="false" text="Action">
+                        <items>
+                          <MenuItem fx:id="mActionRun" mnemonicParsing="false" onAction="#doActionRun" text="Run" />
+                              <MenuItem fx:id="mActionScript" mnemonicParsing="false" onAction="#doActionScript" text="Script" />
+                        </items>
+                      </Menu>
+                        <Menu mnemonicParsing="false" text="Settings">
+                          <items>
+                            <MenuItem fx:id="mSetOptions" mnemonicParsing="false" onAction="#doSetOptions" text="Set Options" />
+                          </items>
+                        </Menu>
+                      <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+                        <items>
+                          <MenuItem fx:id="mHelpRequired" mnemonicParsing="false" onAction="#doHelpRequired" text="HelpFul" />
+                              <MenuItem fx:id="mHelpHelp" mnemonicParsing="false" onAction="#doHelpHelp" text="Help" />
+                              <MenuItem fx:id="mHelpAbout" mnemonicParsing="false" onAction="#doHelpAbout" text="About" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+                  <Button fx:id="btnWorkspace" mnemonicParsing="false" onAction="#doFileSwitch">
+                     <font>
+                        <Font name="SansSerif Regular" size="16.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip fx:id="ttWorkspace" text="Switch Workspace.">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Tooltip>
+                     </tooltip>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets right="4.0" />
+               </padding>
+            </HBox>
             <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
             <HBox alignment="CENTER_LEFT" spacing="4.0">
                <children>

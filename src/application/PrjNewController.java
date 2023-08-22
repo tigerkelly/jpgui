@@ -77,7 +77,7 @@ public class PrjNewController implements Initializable, RefreshScene {
     	}
     	
     	File iWin = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "win_in");
+				"projects" + File.separator + prjName + File.separator + "win-in");
     	if (iWin.exists() == false)
     		iWin.mkdirs();
     	
@@ -89,7 +89,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 		}
     	
     	File oWin = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "win_out");
+				"projects" + File.separator + prjName + File.separator + "win-out");
     	if (oWin.exists() == false)
     		oWin.mkdirs();
     	
@@ -101,7 +101,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 		}
     	
     	File iLinux = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "linux_in");
+				"projects" + File.separator + prjName + File.separator + "linux-in");
     	if (iLinux.exists() == false)
     		iLinux.mkdirs();
     	
@@ -113,7 +113,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 		}
     	
     	File oLinux = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "linux_out");
+				"projects" + File.separator + prjName + File.separator + "linux-out");
     	if (oLinux.exists() == false)
     		oLinux.mkdirs();
     	
@@ -125,7 +125,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 		}
     	
     	File iMac = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "mac_in");
+				"projects" + File.separator + prjName + File.separator + "mac-in");
     	if (iMac.exists() == false)
     		iMac.mkdirs();
     	
@@ -137,7 +137,7 @@ public class PrjNewController implements Initializable, RefreshScene {
 		}
     	
     	File oMac = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "mac_out");
+				"projects" + File.separator + prjName + File.separator + "mac-out");
     	if (oMac.exists() == false)
     		oMac.mkdirs();
     	

@@ -48,7 +48,7 @@ public class JpGlobal {
 	}
 	
 	private void initGlobals() {
-		appVersion = "1.1.16";
+		appVersion = "1.2.0";
 		
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("win") == true) {
@@ -64,26 +64,23 @@ public class JpGlobal {
 		
 		String d = System.getProperty("user.home");
 		
-		workDir = new File(d + File.separator + "JpGui" + File.separator + "projects");
+		homeDir = new File(d + File.separator + "JpGui");
 		
-		if (workDir.exists() == false) {
-			workDir.mkdirs();
+		if (homeDir.exists() == false) {
+			homeDir.mkdirs();
 		}
 		
-		File f = new File(workDir.getAbsolutePath() + File.separator + "jpgui.ini");
+		File f = new File(homeDir.getAbsolutePath() + File.separator + "workspaces.ini");
+		
 		if (f.exists() == false) {
 			try {
 				f.createNewFile();
 				
 				try {
 					FileWriter myWriter = new FileWriter(f.getAbsolutePath());
-					myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
-					myWriter.write("\tjpackage = jpackage\n");
-					myWriter.write("\twinBaseDir =\n");
-					myWriter.write("\tlinuxBaseDir =\n");
-					myWriter.write("\tmacBaseDir =\n");
-						
-					myWriter.write("[Projects]\n\n");
+					myWriter.write("# JpGui Workspaces INI file.\n\n[Workspaces]\n\n");
+					myWriter.write("[Current]\n\tworkspace = \n");
+					
 					myWriter.close();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -93,23 +90,15 @@ public class JpGlobal {
 			}
 		}
 		
-		sysIni = new IniFile(f.getAbsolutePath());
+		wsIni = new IniFile(f.getAbsolutePath());
 		
-		jpackagePath = sysIni.getString("System", "jpackage");
-		if (jpackagePath == null || jpackagePath.isBlank() == true)
-			jpackagePath = "jpackage";
+		String ws = wsIni.getString("Current", "workspace");
+		if (ws.isBlank() == false)
+			workspace = new File(ws);
 		
-		String winBase = sysIni.getString("System", "Win basedir");
-		if (winBase != null)
-			winBaseDir = new File(winBase);
-		
-		String linuxBase = sysIni.getString("System", "Linux basedir");
-		if (linuxBase != null)
-			linuxBaseDir = new File(linuxBase);
-		
-		String macBase = sysIni.getString("System", "Mac basedir");
-		if (macBase != null)
-			macBaseDir = new File(macBase);
+		if (workspace != null) {
+			setupProject();
+		}
 		
 		prjList = new HashMap<String, IniFile>();
 		orgList = new HashMap<String, IniFile>();
@@ -118,10 +107,6 @@ public class JpGlobal {
 		orgList.clear();
 		
 		sceneNav = new SceneNav();
-		
-		String cmd = jpackagePath + " --version";
-		ProcessRet pr = runProcess(cmd.split(" "), null);
-		jpackageVersion = pr.getOutput();
 		
 		InputStream undoImg = getClass().getResourceAsStream("/images/undo.png");
 		imgUndo = new Image(undoImg, 18, 18, false, false);
@@ -134,6 +119,8 @@ public class JpGlobal {
 		
 		InputStream listImg = getClass().getResourceAsStream("/images/list.png");
 		imgList = new Image(listImg, 18, 18, false, false);
+		InputStream editImg = getClass().getResourceAsStream("/images/edit.png");
+		imgEdit = new Image(editImg, 18, 18, false, false);
 		
 		font1 = Font.font("SansSerif", 16.0);
 	}
@@ -147,6 +134,7 @@ public class JpGlobal {
 	public Image imgFile = null;
 	public Image imgHelp = null;
 	public Image imgList = null;
+	public Image imgEdit = null;
 	
 	public Font font1 = null;
 	
@@ -155,12 +143,15 @@ public class JpGlobal {
 	
 	Alert alert = null;
 	public IniFile sysIni = null;
+	public IniFile wsIni = null;
 	public IniFile currPrj = null;
 	public SceneNav sceneNav = null;
 	public File workDir = null;
+	public File homeDir = null;
 	public File winBaseDir = null;
 	public File linuxBaseDir = null;
 	public File macBaseDir = null;
+	public File workspace = null;
 	public int osType = 0;
 	
 	public String projectOpen = null;
@@ -182,6 +173,62 @@ public class JpGlobal {
 			}
 		}
 		return singleton;
+	}
+	
+	public void setupProject() {
+		workDir = new File(workspace.getAbsolutePath());
+		
+		if (workDir.exists() == false) {
+			workDir.mkdirs();
+		}
+		
+		File f = new File(workDir.getAbsolutePath() + File.separator + "jpgui.ini");
+		
+		if (f.exists() == false) {
+			try {
+				f.createNewFile();
+				
+				try {
+					FileWriter myWriter = new FileWriter(f.getAbsolutePath());
+					myWriter.write("# Jpackage project builder INI file.\n\n[System]\n");
+					myWriter.write("\tjpackage = jpackage\n");
+					myWriter.write("\tmodulepath = \n");
+					myWriter.write("\tWin basedir =\n");
+					myWriter.write("\tLinux basedir =\n");
+					myWriter.write("\tMac basedir =\n\n");
+						
+					myWriter.write("[Projects]\n\n");
+					myWriter.write("[UserMods]\n\n");
+					myWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	
+		sysIni = new IniFile(f.getAbsolutePath());
+		
+		jpackagePath = sysIni.getString("System", "jpackage");
+		if (jpackagePath == null || jpackagePath.isBlank() == true)
+			jpackagePath = "jpackage";
+		
+		String winBase = sysIni.getString("System", "Win basedir");
+		if (winBase != null)
+			winBaseDir = new File(winBase);
+		
+		String linuxBase = sysIni.getString("System", "Linux basedir");
+		if (linuxBase != null)
+			linuxBaseDir = new File(linuxBase);
+		
+		String macBase = sysIni.getString("System", "Mac basedir");
+		if (macBase != null)
+			macBaseDir = new File(macBase);
+		
+		String cmd = jpackagePath + " --version";
+		ProcessRet pr = runProcess(cmd.split(" "), null);
+		jpackageVersion = pr.getOutput();
 	}
 	
 	public String scenePeek() {
@@ -394,11 +441,11 @@ public class JpGlobal {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
                 	String pn = file.toString();
                 	// Omit the executable that was created.
-                	if(pn.contains(File.separator + "win_out" + File.separator + prjName) == true) {
+                	if(pn.contains(File.separator + "win-out" + File.separator + prjName) == true) {
                 		return FileVisitResult.CONTINUE;
-                	} else if(pn.contains(File.separator + "linux_out" + File.separator + prjName) == true) {
+                	} else if(pn.contains(File.separator + "linux-out" + File.separator + prjName) == true) {
                 		return FileVisitResult.CONTINUE;
-                	} else if(pn.contains(File.separator + "mac_out" + File.separator + prjName) == true) {
+                	} else if(pn.contains(File.separator + "mac-out" + File.separator + prjName) == true) {
                 		return FileVisitResult.CONTINUE;
                 	}
                 	
@@ -488,23 +535,25 @@ public class JpGlobal {
 
 			Stage ps = (Stage) node.getScene().getWindow();
 
-			ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
-				double stageWidth = newValue.doubleValue();
-				stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
-			};
-			ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
-				double stageHeight = newValue.doubleValue();
-				stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
-			};
-
-			stage.widthProperty().addListener(widthListener);
-			stage.heightProperty().addListener(heightListener);
-
-			// Once the window is visible, remove the listeners
-			stage.setOnShown(e2 -> {
-				stage.widthProperty().removeListener(widthListener);
-				stage.heightProperty().removeListener(heightListener);
-			});
+			if (ps != null) {
+				ChangeListener<Number> widthListener = (observable, oldValue, newValue) -> {
+					double stageWidth = newValue.doubleValue();
+					stage.setX(ps.getX() + ps.getWidth() / 2 - stageWidth / 2);
+				};
+				ChangeListener<Number> heightListener = (observable, oldValue, newValue) -> {
+					double stageHeight = newValue.doubleValue();
+					stage.setY(ps.getY() + ps.getHeight() / 2 - stageHeight / 2);
+				};
+	
+				stage.widthProperty().addListener(widthListener);
+				stage.heightProperty().addListener(heightListener);
+	
+				// Once the window is visible, remove the listeners
+				stage.setOnShown(e2 -> {
+					stage.widthProperty().removeListener(widthListener);
+					stage.heightProperty().removeListener(heightListener);
+				});
+			}
 
 		} catch (IOException e1) {
 			e1.printStackTrace();

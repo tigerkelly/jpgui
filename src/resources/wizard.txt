@@ -16,6 +16,10 @@
   *Description:--description <description string>
           Description of the application
 ;
+  +Icon:--icon <file path>
+          Path of the icon of the application package
+          (absolute path or relative to the current directory)
+;
   *App Name:--name -n <name>
           Name of the application and/or package
 ;
@@ -30,6 +34,17 @@
           specified), or the default set of modules (if --main-jar is
           specified) are used.
           This option can be used multiple times.
+;
+  -Destination:--dest -d <destination path>
+          Path where generated output file is placed
+          (absolute path or relative to the current directory)
+          Defaults to the current working directory.
+;
+  -Input:--input -i <directory path>
+          Path of the input directory that contains the files to be packaged
+          (absolute path or relative to the current directory)
+          All files in the input directory will be packaged into the
+          application image.
 ;
   @Module Path:--module-path -p <module path>...
           A ; separated list of paths

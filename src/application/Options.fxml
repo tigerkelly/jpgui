@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -75,6 +76,30 @@
                         <Tooltip text="Select jpackage executable." />
                      </tooltip>
                   </Button>
+               </children>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </HBox>
+            <HBox spacing="4.0">
+               <children>
+                  <Label prefWidth="150.0" text="User Modules:">
+                     <font>
+                        <Font name="SansSerif Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="taUserMods" prefHeight="200.0" prefWidth="400.0">
+                     <tooltip>
+                        <Tooltip text="One module per line.">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Tooltip>
+                     </tooltip>
+                     <font>
+                        <Font name="SansSerif Regular" size="18.0" />
+                     </font>
+                  </TextArea>
                </children>
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />

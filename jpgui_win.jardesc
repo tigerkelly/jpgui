@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252" standalone="no"?>
 <jardesc>
     <jar path="C:/Users/Kellyw/input_jpgui/jpgui.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/jpgui/jpgui.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/jpgui/jpgui_win.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="false" manifestLocation="/jpgui/manifest.mf" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">

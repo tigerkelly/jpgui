@@ -29,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -68,6 +69,9 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
     private TextField appName = null;
     private TextField vendor = null;
     private TextField addModules = null;
+    private TextField destination = null;
+    private TextField input = null;
+    private TextField icon = null;
     private TextField modulePath = null;
     private TextField mainClass = null;
     private TextField mainJar = null;
@@ -94,8 +98,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
     	
     	jg.sysIni.addValuePair("Projects", prjName, prjDesc);
     	
-    	File f1 = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-    					"projects" + File.separator + prjName);
+    	File f1 = new File(jg.workDir.getAbsolutePath() + File.separator + prjName);
     	if (f1.exists() == false) {
     		f1.mkdirs();
     	}
@@ -111,8 +114,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			}
     	}
     	
-    	File iWin = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "win_in");
+    	File iWin = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "win-in");
     	if (iWin.exists() == false)
     		iWin.mkdirs();
     	
@@ -123,8 +125,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
     	
-    	File oWin = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "win_out");
+    	File oWin = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "win-out");
     	if (oWin.exists() == false)
     		oWin.mkdirs();
     	
@@ -135,8 +136,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
     	
-    	File iLinux = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "linux_in");
+    	File iLinux = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "linux-in");
     	if (iLinux.exists() == false)
     		iLinux.mkdirs();
     	
@@ -147,8 +147,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
     	
-    	File oLinux = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "linux_out");
+    	File oLinux = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "linux-out");
     	if (oLinux.exists() == false)
     		oLinux.mkdirs();
     	
@@ -159,8 +158,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
     	
-    	File iMac = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "mac_in");
+    	File iMac = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "mac-in");
     	if (iMac.exists() == false)
     		iMac.mkdirs();
     	
@@ -171,8 +169,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 			e.printStackTrace();
 		}
     	
-    	File oMac = new File(System.getProperty("user.home") + File.separator + "JpGui" + File.separator +
-				"projects" + File.separator + prjName + File.separator + "mac_out");
+    	File oMac = new File(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "mac-out");
     	if (oMac.exists() == false)
     		oMac.mkdirs();
     	
@@ -232,6 +229,18 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
     		prjIni.addValuePair("Runtime Image Options", os + "Add Modules", addModules.getText());
     	else
     		System.out.println("addmodules");
+    	if (destination != null)
+    		prjIni.addValuePair("Generic Options", os + "Destination", destination.getText());
+    	else
+    		System.out.println("destination");
+    	if (input != null)
+    		prjIni.addValuePair("Application Image Options", os + "Input", input.getText());
+    	else
+    		System.out.println("input");
+    	if (icon != null)
+    		prjIni.addValuePair("Generic Options", os + "Icon", icon.getText());
+    	else
+    		System.out.println("icon");
     	if (modulePath != null)
     		prjIni.addValuePair("Runtime Image Options", os + "Module Path", modulePath.getText());
     	else
@@ -326,6 +335,16 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 		ta.setEditable(false);
 		ta.setWrapText(true);
 		
+		String prjName = tfProjectName.getText();
+		
+		File f1 = new File(jg.workDir.getAbsolutePath() + File.separator + prjName);
+    	if (f1.exists() == false) {
+    		f1.mkdirs();
+    	}
+    	File prjIniFile = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
+		
+		IniFile prjIni = new IniFile(prjIniFile.getAbsolutePath());
+		
 		popup.getContent().add(ta);
 		
 		HBox hb = null;
@@ -349,9 +368,10 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 				CheckBox ckb = null;
 				
 				String[] arr = line.split(":");
+				String prompt = arr[0].substring(1);
 				
-				Label lbl = new Label(arr[0].substring(1) + ":");
-				lbl.setUserData(arr[0].substring(1));
+				Label lbl = new Label(prompt + ":");
+				lbl.setUserData(prompt);
 				lbl.setFont(jg.font1);
 				lbl.setPrefWidth(150.0);
 				hb = new HBox();
@@ -361,17 +381,18 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 				
 				if (line.charAt(0) == '&') {
 					if (lbl.getText().equals("Shortcut:") == true && jg.osType != 3) {
-						ckb = new CheckBox(arr[0].substring(1));
-						ckb.setUserData(arr[0].substring(1));
+						ckb = new CheckBox(prompt);
+						ckb.setUserData(prompt);
 						ckb.setFont(jg.font1);
-						ckb.setPrefWidth(250);
+						Region rg = new Region();
+						HBox.setHgrow(rg, Priority.ALWAYS);
 						
 						if (lbl.getText().equals("Shortcut:") == true) {
 							ckb.setSelected(true);
 							shortcut = ckb;
 						}
 						
-						hb.getChildren().addAll(lbl, ckb);
+						hb.getChildren().addAll(lbl, ckb, rg);
 						vbox.getChildren().add(hb);
 					}
 				} else if (line.charAt(0) == '*') {
@@ -389,7 +410,7 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 							tf.setText("pkg");
 						packageType = tf;
 					} else if (lbl.getText().equals("App Version:") == true) {
-						tf.setText("1.0.0");
+						tf.setText("%1");
 						appVersion = tf;
 					} else if (lbl.getText().equals("Copyright:") == true) {
 						tf.setText("Copyright by me");
@@ -422,6 +443,24 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 					tf.setFont(jg.font1);
 					
 					HBox.setHgrow(tf, Priority.ALWAYS);
+					
+					if (lbl.getText().equals("Input:") == true) {
+						if (jg.osType == 1)
+							tf.setText(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator	+ "win-in");
+						else if (jg.osType == 2)
+							tf.setText(jg.workDir.getAbsolutePath().replaceAll("\\", "/") + "/" + prjName + "/"	+ "linux-in");
+						else if (jg.osType == 3)
+							tf.setText(jg.workDir.getAbsolutePath().replaceAll("\\", "/") + "/" + prjName + "/"	+ "mac-in");
+						input = tf;
+					} else if (lbl.getText().equals("Destination:") == true) {
+						if (jg.osType == 1)
+				    		tf.setText(jg.workDir.getAbsolutePath() + File.separator + prjName + File.separator + "win-out");
+				    	else if (jg.osType == 2)
+				    		tf.setText(jg.workDir.getAbsolutePath().replaceAll("\\", "/") + "/" + prjName + "/"+ "linux-out");
+				    	else if (jg.osType == 3)
+				    		tf.setText(jg.workDir.getAbsolutePath().replaceAll("\\", "/") + "/" + prjName + "/"+ "mac-out");
+						destination = tf;
+					}
 					
 					sb = new MyButton();
 					sb.setMyData("^");
@@ -540,6 +579,10 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
 					tf.setFont(jg.font1);
 					
 					HBox.setHgrow(tf, Priority.ALWAYS);
+					
+					if (lbl.getText().equals("Icon:") == true) {
+						icon = tf;
+					}
 					
 					sb = new MyButton();
 					sb.setMyData("^");
