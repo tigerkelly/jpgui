@@ -1749,6 +1749,10 @@ public class JpGuiController implements Initializable, RefreshScene {
 			
 			if (consoleFlag == true)
 				fw.write("echo \u001B[93mWARNING:\u001B[0m The windows console flag is set.\n");
+			if (javaVerboseFlag == true)
+				fw.write("echo \u001B[93mWARNING:\u001B[0m The Java verbose flag is set.\n");
+			if (jpackageVerboseFlag == true)
+				fw.write("echo \u001B[93mWARNING:\u001B[0m The Jpackage verbose flag is set.\n");
 			
 			fw.write(cmdLine + "\n\n");
 			
