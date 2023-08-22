@@ -7,6 +7,7 @@ This GUI program will help you to manage jpackage projects for each of you appli
 Some of the features are:
 
 - Can have multiple projects open at once.
+- Can have as many workspaces as needed.
 - Can manage all three platforms with one GUI. The platforms are Windows, Linux (like) and Apple Mac
 - Each option has a help button.
 - A 'New Project Wizard' to help you get started with a project.
