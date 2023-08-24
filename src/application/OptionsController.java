@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +38,9 @@ public class OptionsController implements Initializable, RefreshScene {
     
     @FXML
     private TextArea taUserMods;
+    
+    @FXML
+    private CheckBox chbRemoveAll;
     
     private JpGlobal jg = JpGlobal.getInstance();
 
@@ -73,6 +77,10 @@ public class OptionsController implements Initializable, RefreshScene {
     	} else {
     		jg.modulePath = null;
     	}
+    	
+    	boolean rmAll = chbRemoveAll.isSelected();
+    	
+    	jg.sysIni.addValuePair("System", "removeall", Boolean.toString(rmAll));
     	
     	int idx = 0;
     	Object[] objs = jg.sysIni.getSectionKeys("UserMods");
@@ -137,6 +145,11 @@ public class OptionsController implements Initializable, RefreshScene {
 		String mp = jg.sysIni.getString("System", "modulepath");
 		if (mp != null)
 			tfPath.setText(mp);
+		
+		if (jg.sysIni.keyExists("System", "removeall") == true) {
+			boolean rmAll = jg.sysIni.getBoolean("System", "removeall");
+			chbRemoveAll.setSelected(rmAll);
+		}
 		
 		taUserMods.setText("");
 		Object[] objs = jg.sysIni.getSectionKeys("UserMods");

@@ -140,6 +140,7 @@ public class JpGlobal {
 	
 	public boolean loadFlag = false;
 	public boolean leaveProgram = false;
+	public boolean rmAll = false;
 	
 	Alert alert = null;
 	public IniFile sysIni = null;
@@ -225,6 +226,9 @@ public class JpGlobal {
 		String macBase = sysIni.getString("System", "Mac basedir");
 		if (macBase != null)
 			macBaseDir = new File(macBase);
+		
+		if (sysIni.keyExists("System", "removeall") == true)
+			rmAll = sysIni.getBoolean("System", "removeAll");
 		
 		String cmd = jpackagePath + " --version";
 		ProcessRet pr = runProcess(cmd.split(" "), null);

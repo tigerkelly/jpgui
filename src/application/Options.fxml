@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -104,6 +105,22 @@
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="4.0">
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+               <children>
+                  <Region prefWidth="150.0" />
+                  <CheckBox fx:id="chbRemoveAll" mnemonicParsing="false" selected="true" text="Remove old install programs">
+                     <font>
+                        <Font name="SansSerif Bold" size="16.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Remove all install programs&#10;for the destination directory&#10;else only the version you are&#10;creating." />
+                     </tooltip>
+                  </CheckBox>
+               </children>
             </HBox>
             <HBox alignment="CENTER" spacing="4.0">
                <children>

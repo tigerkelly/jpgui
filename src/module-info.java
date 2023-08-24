@@ -6,6 +6,7 @@ module jgui {
 	requires java.base;
 	requires java.desktop;
 	requires IniFile;
+	requires java.scripting;
 	
 	opens application to javafx.graphics, javafx.fxml, javafx.base, java;
 }
