@@ -2,9 +2,13 @@ package application;
 	
 import java.io.IOException;
 
+import com.rkw.IniFile;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -21,7 +25,26 @@ public class Main extends Application {
 			primaryStage.setScene(createScene(loadMainPane()));
 			primaryStage.setMinWidth(750);
 			primaryStage.setMinHeight(800);
-			primaryStage.setOnCloseRequest((e) -> e.consume());		// disable Stage close button.
+			primaryStage.setOnCloseRequest((e) -> { 
+				Object[] objs = jg.prjList.keySet().toArray();
+
+				for (Object o : objs) {
+					String s = (String) o;
+					IniFile ini = jg.prjList.get(s);
+					if (ini.getChangedFlag() == true) {
+						ButtonType bt = jg.yesNoCancelAlert(mainPane, "Quit JpGui", 
+								"You have unsaved changes.\n" +
+								"Select 'No' to abort all changes and exit.\n" +
+								"select 'Yes' to close dialog, then use\n" +
+								"Menu File -> 'Save Project' or 'Save all Projects'.\n", null);
+//						System.out.println(bt);
+						if (bt.getButtonData() == ButtonData.YES) {
+							e.consume();
+							return;
+						}
+					}
+				}
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

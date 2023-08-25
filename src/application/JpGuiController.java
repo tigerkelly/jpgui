@@ -52,7 +52,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-public class JpGuiController implements Initializable, RefreshScene {
+public class JpGuiController implements Initializable{
 
 	@FXML
     private ResourceBundle resources;
@@ -363,7 +363,7 @@ public class JpGuiController implements Initializable, RefreshScene {
 						"Select 'No' to abort all changes and exit.\n" +
 						"select 'Yes' to close dialog, then use\n" +
 						"Menu File -> 'Save Project' or 'Save all Projects'.\n", null);
-				System.out.println(bt);
+//				System.out.println(bt);
 				if (bt.getButtonData() == ButtonData.YES) {
 					return;
 				}
@@ -2229,20 +2229,5 @@ public class JpGuiController implements Initializable, RefreshScene {
 		}
 		
 		loadFields(prjName);
-	}
-	
-	@Override
-	public void refreshScene() {
-		
-	}
-
-	@Override
-	public void leaveScene() {
-		
-	}
-
-	@Override
-	public void clickIt(String text) {
-		
 	}
 }
