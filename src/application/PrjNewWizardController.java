@@ -341,9 +341,9 @@ public class PrjNewWizardController implements Initializable, RefreshScene {
     	if (f1.exists() == false) {
     		f1.mkdirs();
     	}
-    	File prjIniFile = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
+//    	File prjIniFile = new File(f1.getAbsolutePath() + File.separator + prjName + ".ini");
 		
-		IniFile prjIni = new IniFile(prjIniFile.getAbsolutePath());
+//		IniFile prjIni = new IniFile(prjIniFile.getAbsolutePath());
 		
 		popup.getContent().add(ta);
 		
