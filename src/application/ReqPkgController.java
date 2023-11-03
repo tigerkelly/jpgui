@@ -74,8 +74,8 @@ public class ReqPkgController implements Initializable, RefreshScene {
 			taText.appendText("About the GUI.\n");
 			taText.appendText("  You can have more than one project open at once.\n");
 			taText.appendText("  Each project has three different platforms (Window, Linux and Mac).\n");
-			taText.appendText("  Use the Combobox at the top right of the GUI to control which\n");
-			taText.appendText("  platform you are editing.\n");
+			taText.appendText("  Use the Combobox at the top right of the GUI to control which platform\n");
+			taText.appendText("  you are editing.\n");
 			taText.appendText("  The select a file or select a directory button could be disabled because\n");
 			taText.appendText("  you are editing a different platform than the GUI is running on.  Like\n");
 			taText.appendText("  Running on a Windows platform but editing Linux or Mac platform.\n");

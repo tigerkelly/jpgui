@@ -55,10 +55,10 @@ import javafx.stage.Stage;
 public class JpGuiController implements Initializable{
 
 	@FXML
-    private ResourceBundle resources;
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
     @FXML
     private AnchorPane aPane;
@@ -143,6 +143,9 @@ public class JpGuiController implements Initializable{
 
     @FXML
     private Menu menuPlatform;
+    
+    @FXML
+    private Menu mOpenRecent;
 
     @FXML
     private Menu menuAction;
@@ -167,12 +170,15 @@ public class JpGuiController implements Initializable{
     
     private JpGlobal jg = JpGlobal.getInstance();
     ObservableList<String> platforms = null;
+    ObservableList<MenuItem> recents = null;
     Popup popup = null;
     DirectoryChooser dc = null;
     FileChooser fc = null;
     FileChooser zfc = null;
     int lastBtn = -1;
     String os = null;
+    
+    final int MAX_RECENTS = 8;
     
     @FXML
     void doSetOptions(ActionEvent event) {
@@ -393,14 +399,56 @@ public class JpGuiController implements Initializable{
     	jg.centerScene(aPane, "PrjOpen.fxml", "Open Project", null);
     	
     	if (jg.projectOpen != null) {
+    		
+    		String recent = jg.sysIni.getString("RecentOpens", "projects");
+    		if (recent != null) {
+    			if (recent.contains(jg.projectOpen) == false)
+    				recent = jg.projectOpen + "," + recent;
+    		} else {
+    			recent = jg.projectOpen;
+    		}
+    		
+    		String[] arr = recent.split(",");
+    		if (arr.length >= MAX_RECENTS) {
+    			String rs = null;
+    			for (int z = 0; z < MAX_RECENTS; z++) {
+    				if (rs == null)
+    					rs = arr[z];
+    				else
+    					rs += "," + arr[z];
+    			}
+    			
+    			recent = rs;
+    			
+    			arr = recent.split(",");
+    			recents.clear();
+    			
+    			for (String a : arr) {
+    				MenuItem mi = new MenuItem(a);
+    				mi.setOnAction((ee) -> {
+    					MenuItem m = (MenuItem)ee.getSource();
+    					jg.projectOpen = m.getText();
+    					recentOpenProject();
+    				});
+    				recents.add(mi);
+    			}
+    		}
+    		
+    		jg.sysIni.addValuePair("RecentOpens", "projects", recent);
+    		jg.sysIni.writeFile(true);
+    		
     		ObservableList<Tab> tabs = tabPane.getTabs();
     		for (Tab tab : tabs) {
     			if (tab.getText().equalsIgnoreCase(jg.projectOpen) == true) {
+    				tabPane.getSelectionModel().select(tab);
     				jg.showAlert("Dup Project", "You already have that project open.", AlertType.ERROR, false);
     				return;
     			}
     		}
+    		
     		createPrjTab(jg.projectOpen);
+    		
+    		
     		
     		File f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win_in");
     		File t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win-in");
@@ -698,6 +746,27 @@ public class JpGuiController implements Initializable{
 		zfc = new FileChooser();
 		dc = new DirectoryChooser();
 		
+		if (jg.sysIni.sectionExists("RecentOpens") == false) {
+			jg.sysIni.addSection("RecentOpens");
+			jg.sysIni.writeFile(true);
+		}
+		
+		recents = mOpenRecent.getItems();
+		
+		String rs = jg.sysIni.getString("RecentOpens", "projects");
+		if (rs != null) {
+			String[] arr = rs.split(",");
+			for (String a : arr) {
+				MenuItem mi = new MenuItem(a);
+				mi.setOnAction((ee) -> {
+					MenuItem m = (MenuItem)ee.getSource();
+					jg.projectOpen = m.getText();
+					recentOpenProject();
+				});
+				recents.add(mi);
+			}
+		}
+		
 		setMenu(true);
 		
 		// used to get workspace if not defined yet.
@@ -940,14 +1009,13 @@ public class JpGuiController implements Initializable{
 				}
 				
 				String[] arr = line.split(":");
-//				String opt = arr[1].split(" ")[0];
 				
 				String prompt = arr[0].substring(1);
 				
 				Label lbl = new Label(prompt + ":");
 				lbl.setUserData(prompt);
 				lbl.setFont(jg.font1);
-				lbl.setPrefWidth(150.0);
+				lbl.setPrefWidth(175.0);
 				hb = new HBox();
 				hb.setSpacing(4.0);
 				hb.setPadding(new Insets(4, 4, 4, 4));
@@ -961,6 +1029,7 @@ public class JpGuiController implements Initializable{
 					Region rg = new Region();
 					HBox.setHgrow(rg, Priority.ALWAYS);
 					final TitledPane titledPane = tp;
+					final CheckBox fckb = ckb;
 					ckb.selectedProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -973,6 +1042,9 @@ public class JpGuiController implements Initializable{
 							jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue.toString());
 						}
 					    titledPane.setStyle("-fx-text-fill: " + hColor);
+					    HBox hb2 = (HBox)fckb.getParent();
+					    Label lbl2 = (Label)hb2.getChildren().get(0);
+					    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 					});
 					
 					hb.getChildren().addAll(lbl, ckb, rg);
@@ -984,6 +1056,7 @@ public class JpGuiController implements Initializable{
 					if (prompt.toLowerCase().equals("app version") == true)
 						tf.setText("%1");
 					final TitledPane titledPane = tp;
+					final TextField ftf = tf;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -996,6 +1069,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)ftf.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
@@ -1012,6 +1088,7 @@ public class JpGuiController implements Initializable{
 					tf = new TextField();
 					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
+					final TextField ftf = tf;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -1024,6 +1101,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)ftf.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
@@ -1059,6 +1139,7 @@ public class JpGuiController implements Initializable{
 					tf = new TextField();
 					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
+					final TextField ftf = tf;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -1071,6 +1152,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)ftf.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
@@ -1112,6 +1196,7 @@ public class JpGuiController implements Initializable{
 					tf = new TextField();
 					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
+					final TextField ftf = tf;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -1124,6 +1209,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)ftf.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
@@ -1166,6 +1254,7 @@ public class JpGuiController implements Initializable{
 					tf = new TextField();
 					tf.setFont(jg.font1);
 					final TitledPane titledPane = tp;
+					final TextField ftf = tf;
 					tf.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -1178,6 +1267,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)ftf.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					HBox.setHgrow(tf, Priority.ALWAYS);
@@ -1215,6 +1307,7 @@ public class JpGuiController implements Initializable{
 					ta.setPrefHeight(250.0);
 					ta.setFont(jg.font1);
 					final TitledPane titledPane = tp;
+					final TextArea fta = ta;
 					ta.textProperty().addListener((observable, oldValue, newValue) -> {
 						if (jg.loadFlag == true)
 							return;
@@ -1227,6 +1320,9 @@ public class JpGuiController implements Initializable{
 								jg.currPrj.addValuePair(titledPane.getText(), jg.platform + " " + (String)lbl.getUserData(), newValue);
 							}
 							titledPane.setStyle("-fx-text-fill: " + hColor);
+							HBox hb2 = (HBox)fta.getParent();
+						    Label lbl2 = (Label)hb2.getChildren().get(0);
+						    lbl2.setStyle("-fx-text-fill: blueviolet; -fx-font-weight: bold;");
 						}
 					});
 					
@@ -1293,11 +1389,15 @@ public class JpGuiController implements Initializable{
 						TextField tf2 = (TextField) hb2.getChildren().get(1);
 						tf2.setText((String)tf2.getUserData());
 						jg.currPrj.addValuePair(tp2.getText(), jg.platform + " " + (String)lbl.getUserData(), (String)tf2.getUserData());
+						Label lbl2 = (Label)hb2.getChildren().get(0);
+						lbl2.setStyle("-fx-text-fill: black;");
 					}
 					if (hb2.getChildren().get(1) instanceof CheckBox) {
 						CheckBox ckb2 = (CheckBox) hb2.getChildren().get(1);
 						ckb2.setSelected((Boolean)ckb2.getUserData());
 						jg.currPrj.addValuePair(tp2.getText(), jg.platform + " " + (String)lbl.getUserData(), ckb2.getUserData().toString());
+						Label lbl2 = (Label)hb2.getChildren().get(0);
+						lbl2.setStyle("-fx-text-fill: black;");
 					}
 						
 				});
@@ -2230,4 +2330,100 @@ public class JpGuiController implements Initializable{
 		
 		loadFields(prjName);
 	}
+	
+	private void recentOpenProject() {
+    	
+    	if (jg.projectOpen != null) {
+    		
+    		ObservableList<Tab> tabs = tabPane.getTabs();
+    		for (Tab tab : tabs) {
+    			if (tab.getText().equalsIgnoreCase(jg.projectOpen) == true) {
+    				tabPane.getSelectionModel().select(tab);
+    				jg.showAlert("Dup Project", "You already have that project open.", AlertType.ERROR, false);
+    				return;
+    			}
+    		}
+    		
+    		createPrjTab(jg.projectOpen);
+    		
+    		
+    		
+    		File f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win_in");
+    		File t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win-in");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win_out");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win-out");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux_in");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux-in");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux_out");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux-out");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac_in");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac-in");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac_out");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac-out");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "_linux.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "-linux.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "_win.bat");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "-win.bat");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "_mac.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + jg.projectOpen + "-mac.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux_prerun.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux-prerun.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win_prerun.bat");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win-prerun.bat");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac_prerun.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac-prerun.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux_postrun.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "linux-postrun.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win_postrun.bat");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "win-postrun.bat");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		f = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac_postrun.sh");
+    		t = new File(jg.workDir.getAbsolutePath() + File.separator + jg.projectOpen + File.separator + "mac-postrun.sh");
+    		if (f.exists() == true)
+    			f.renameTo(t);
+    		
+    		setMenu(false);
+    	}
+    }
 }

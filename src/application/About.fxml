@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="aPane" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AboutController">
+<AnchorPane fx:id="aPane" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AboutController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -36,7 +36,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label text="https://github.com/tigerkelly/JpGui.git">
+                        <Label text="https://github.com/tigerkelly/jpgui.git">
                            <font>
                               <Font size="18.0" />
                            </font>
